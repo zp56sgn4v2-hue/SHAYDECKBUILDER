@@ -115,24 +115,14 @@ header {
 .drops-strip {
   display: flex;
   gap: 18px;
-  flex-wrap: nowrap;
   overflow-x: auto;
-  overflow-y: visible;
   padding-bottom: 10px;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  /* Only show scrollbar when content actually overflows */
-  scrollbar-width: thin;
-  scrollbar-color: #333 transparent;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-.drops-strip::-webkit-scrollbar { height: 4px; }
-.drops-strip::-webkit-scrollbar-track { background: transparent; }
-.drops-strip::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-/* When cards fit without scroll, center them */
-.drops-strip.no-scroll {
-  overflow-x: hidden;
-  justify-content: flex-start;
-}
+.drops-strip::-webkit-scrollbar { display: none; }
 
 .drop-card {
   flex: 0 0 150px;
@@ -159,20 +149,19 @@ header {
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform .4s ease;
 }
-.drop-card:hover .drop-img-wrap img { transform: scale(1.02); }
 .drop-new-badge {
   position: absolute;
   top: 9px;
   left: 9px;
   background: var(--accent);
   color: #000;
-  font-size: .58rem;
+  font-size: .6rem;
   font-weight: 600;
   letter-spacing: .08em;
-  padding: 3px 7px;
+  padding: 3px 8px;
   border-radius: 999px;
+  pointer-events: none;
 }
 .drop-label {
   padding: 9px 2px 0;
@@ -316,7 +305,7 @@ header {
   opacity: 1;
 }
 .card .fav.favorited {
-  color: #f87171;
+  color: #e03535;
 }
 
 /* Search Overlay */
@@ -388,33 +377,6 @@ header {
   font-size: .92rem;
   margin-top: 5px;
 }
-.lightbox-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  margin-top: 20px;
-}
-.lb-action-btn {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 9px 20px;
-  border-radius: 999px;
-  border: 1px solid #333;
-  background: #111;
-  color: var(--text);
-  font-family: var(--font);
-  font-size: .82rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all .18s ease;
-  text-decoration: none;
-}
-.lb-action-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: #161610;
-}
 .lightbox-nav {
   position: fixed;
   top: 50%;
@@ -454,13 +416,12 @@ header {
   z-index: 20;
 }
 
-/* Rarity filter pills */
+/* Rarity filter */
 .rarity-filter {
   padding: 0 24px 18px;
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  align-items: center;
 }
 .rarity-pill {
   padding: 5px 14px;
@@ -472,15 +433,36 @@ header {
   color: var(--text-dim);
   cursor: pointer;
   font-family: var(--font);
-  transition: all .15s ease;
   letter-spacing: .02em;
+  transition: border-color .15s, color .15s, background .15s;
 }
 .rarity-pill:hover { border-color: #444; color: var(--text); }
-.rarity-pill.active {
-  background: #1e1e1e;
-  border-color: var(--accent);
-  color: var(--accent);
+.rarity-pill.active { background: #1e1e1e; border-color: var(--accent); color: var(--accent); }
+
+/* Lightbox action buttons */
+.lightbox-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 18px;
 }
+.lb-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 20px;
+  border-radius: 999px;
+  border: 1px solid #333;
+  background: #111;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: .82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color .18s, color .18s;
+  text-decoration: none;
+}
+.lb-action-btn:hover { border-color: var(--accent); color: var(--accent); }
 
 /* Empty state */
 .empty {
@@ -490,21 +472,48 @@ header {
   font-size: 1rem;
 }
 
-/* Subtle gold pulse for unrevealed new drops */
-.pulse {
-  animation: goldPulse 3s ease-in-out infinite;
-}
-@keyframes goldPulse {
-  0%,100% { box-shadow: 0 0 0 0 rgba(245,200,66,.12); }
-  50% { box-shadow: 0 0 0 16px rgba(245,200,66,0); }
-}
-
 .footer {
   text-align: center;
-  padding: 50px 20px 35px;
+  padding: 50px 20px 40px;
   font-size: .78rem;
   color: #555;
   letter-spacing: .6px;
+}
+.footer-suggest {
+  margin-bottom: 28px;
+  padding-bottom: 28px;
+  border-top: 1px solid #1e1e1e;
+  padding-top: 40px;
+}
+.footer-suggest-text {
+  font-size: .82rem;
+  color: #555;
+  margin-bottom: 14px;
+  letter-spacing: .03em;
+}
+.footer-suggest-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 22px;
+  border-radius: 999px;
+  border: 1px solid #2a2a2a;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: .82rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: border-color .18s, color .18s;
+}
+.footer-suggest-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.footer-credit {
+  color: #444;
+  font-size: .75rem;
+  letter-spacing: .08em;
 }
 </style>
 </head>
@@ -514,12 +523,12 @@ header {
 <header>
   <div class="header-left">
     <div class="logo">SHAYDEX</div>
-    <div class="card-count" id="headerCount">25 cards</div>
+    <div class="card-count" id="headerCount">V III</div>
   </div>
   
   <div class="header-actions">
     <button class="icon-btn" id="searchBtn" aria-label="Search">🔍</button>
-    <button class="icon-btn" id="collectionBtn" aria-label="Toggle collection">❤</button>
+    <button class="icon-btn" id="collectionBtn" aria-label="Toggle collection">♡</button>
     <button class="icon-btn" id="shareBtn" aria-label="Share">↗</button>
   </div>
 </header>
@@ -554,17 +563,15 @@ header {
 </section>
 
 <div class="footer">
-  <div style="margin-bottom:28px;padding-bottom:28px;border-bottom:1px solid #1e1e1e">
-    <div style="font-size:.82rem;color:#666;margin-bottom:12px;letter-spacing:.04em">Got an idea for a new Shaylen card?</div>
-    <a href="https://docs.google.com/forms/d/e/1FAIpQLSd4IO0m03Xj-opvHVvsBPWpT_TS3-siqkxrSsshLLD0nZJZaQ/viewform?usp=dialog"
-       target="_blank" rel="noopener noreferrer"
-       style="display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border-radius:999px;border:1px solid #2a2a2a;background:transparent;color:var(--text);font-family:var(--font);font-size:.82rem;font-weight:500;text-decoration:none;transition:all .18s ease"
-       onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'"
-       onmouseout="this.style.borderColor='#2a2a2a';this.style.color='var(--text)'">
+  <div class="footer-suggest">
+    <div class="footer-suggest-text">Got an idea for a new Shaylen card?</div>
+    <a class="footer-suggest-btn"
+       href="https://docs.google.com/forms/d/e/1FAIpQLSd4IO0m03Xj-opvHVvsBPWpT_TS3-siqkxrSsshLLD0nZJZaQ/viewform?usp=dialog"
+       target="_blank" rel="noopener noreferrer">
       ✦ Suggest a card
     </a>
   </div>
-  ShayDex V III &nbsp;·&nbsp; Made with ✦ for Shaylen
+  <div class="footer-credit">ShayDex V III &nbsp;&middot;&nbsp; Made by Bro Co.</div>
 </div>
 
 <!-- Search Overlay -->
@@ -586,8 +593,8 @@ header {
       <div class="rarity" id="lbRarity"></div>
     </div>
     <div class="lightbox-actions">
-      <button class="lb-action-btn" id="lbDownload">⬇ Download</button>
-      <button class="lb-action-btn" id="lbShareCard">↗ Share card</button>
+      <button class="lb-action-btn" id="lbDownload">↓ Download</button>
+      <button class="lb-action-btn" id="lbShareCard">↗ Share</button>
     </div>
   </div>
   <button class="lightbox-nav next" id="lbNext">›</button>
@@ -598,15 +605,31 @@ header {
 "use strict";
 
 const cards = [
-  ['1','Silly Shaylen','Basic'],['2','Beaver Shaylen','Rare'],['3','Sandy Shaylen','Rare'],
-  ['4','Panda Shaylen','Rare'],['5',"Cheesin' Shaylen",'Rare'],['6','Princess Shaylen','Secret Rare'],
-  ['7','Pickle Shaylen','Rare'],['8','Dragon Shaylen','Secret Rare'],['9','Bald Shaylen','Basic'],
-  ['10','Shuggie','Secret Rare'],['11','Baby Shaylen','Basic'],['12','Christmas Shaylen','Eternal Legend'],
-  ['13','Devious Shaylen','Secret Rare'],['14','Shocker Shaylen','Basic'],['15','Evil Shaylen','Dark'],
-  ['16','Innocent Shaylen','Basic'],['17','Hefty Shaylen','Basic'],
-  ['18','Groovin’ Shaylen','Rare'],['19','Hungry Shaylen','Basic'],['20','Hangry Shaylen','Rare'],
-  ['21','Sunburnt Shaylen','Secret Rare'],['22','Nature Shaylen','Rare'],
-  ['23','Shaylen And The Bros','Secret Rare'],['24','Bizarre Shaylen','Rare'],['25','Grafiti Shaylen','Rare']
+  ['1','Silly Shaylen','Basic'],
+  ['2','Beaver Shaylen','Rare'],
+  ['3','Sandy Shaylen','Rare'],
+  ['4','Panda Shaylen','Rare'],
+  ['5',"Cheesin' Shaylen",'Rare'],
+  ['6','Princess Shaylen','Secret Rare'],
+  ['7','Pickle Shaylen','Rare'],
+  ['8','Dragon Shaylen','Secret Rare'],
+  ['9','Bald Shaylen','Basic'],
+  ['10','Shuggie','Secret Rare'],
+  ['11','Baby Shaylen','Basic'],
+  ['12','Christmas Shaylen','Eternal Legend'],
+  ['13','Devious Shaylen','Secret Rare'],
+  ['14','Shocker Shaylen','Basic'],
+  ['15','Evil Shaylen','Dark'],
+  ['16','Innocent Shaylen','Basic'],
+  ['17','Hefty Shaylen','Basic'],
+  ['18','Groovin’ Shaylen','Basic'],
+  ['19','Hungry Shaylen','Rare'],
+  ['20','Hangry Shaylen','Basic'],
+  ['21','Sunburnt Shaylen','Basic'],
+  ['22','Nature Shaylen','Rare'],
+  ['23','Shaylen And The Bros','Basic'],
+  ['24','Bizarre Shaylen','Basic'],
+  ['25','Grafiti Shaylen','Basic']
 ].sort((a,b) => Number(b[0]) - Number(a[0]));
 
 const MYSTERY_IDS = new Set(['23','24','25']);
@@ -661,8 +684,8 @@ function loadSmart(img, base) {
 function renderNewDrops() {
   const container = document.getElementById('dropsStrip');
   const section = document.getElementById('newDropsSection');
-  
   const newCards = cards.filter(c => MYSTERY_IDS.has(c[0]));
+
   if (!newCards.length) { section.style.display = 'none'; return; }
   section.style.display = '';
 
@@ -671,7 +694,7 @@ function renderNewDrops() {
     return `<div class="drop-card" data-id="${id}">
       <div class="drop-img-wrap">
         <img data-base="card_${id}" alt="${name}" decoding="async">
-        <div class="drop-new-badge">NEW</div>
+        <span class="drop-new-badge">NEW</span>
       </div>
       <div class="drop-label">
         <div class="drop-name">${name}</div>
@@ -689,12 +712,6 @@ function renderNewDrops() {
       if (idx !== -1) openLightbox(idx);
     });
   });
-
-  // Only show scrollbar if cards overflow the container
-  requestAnimationFrame(() => {
-    const overflows = container.scrollWidth > container.clientWidth + 4;
-    container.classList.toggle('no-scroll', !overflows);
-  });
 }
 
 /* ---------- Render Main Gallery ---------- */
@@ -705,8 +722,6 @@ function renderGallery() {
   const countEl = document.getElementById('galleryCount');
 
   let visibleCards = cards.filter(c => {
-    const isMystery = MYSTERY_IDS.has(c[0]);
-    if (isMystery && !revealed.has(c[0])) return false;
     if (showCollection && !favs.has(c[0])) return false;
     if (activeRarity !== 'all' && c[2] !== activeRarity) return false;
     return true;
@@ -731,7 +746,7 @@ function renderGallery() {
         <img data-base="card_${id}" alt="${name}" decoding="async">
         <div class="info">
           <strong>${name}</strong>
-          <div class="rarity">${rarity}</div>
+          <div class="rarity" style="color:${RARITY_COLOR[rarity]||'var(--accent)'}">${rarity}</div>
         </div>
         <button class="fav ${isFav ? 'favorited' : ''}" aria-label="Toggle favorite">${isFav ? '❤' : '♡'}</button>
       </div>
@@ -752,8 +767,15 @@ function renderGallery() {
     const favBtn = cardEl.querySelector('.fav');
     favBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      if (favs.has(id)) { favs.delete(id); favBtn.textContent = '♡'; favBtn.classList.remove('favorited'); }
-      else { favs.add(id); favBtn.textContent = '❤'; favBtn.classList.add('favorited'); }
+      if (favs.has(id)) {
+        favs.delete(id);
+        favBtn.textContent = '♡';
+        favBtn.classList.remove('favorited');
+      } else {
+        favs.add(id);
+        favBtn.textContent = '❤';
+        favBtn.classList.add('favorited');
+      }
       localStorage.setItem(FAV_KEY, JSON.stringify([...favs]));
       if (showCollection) renderGallery();
     });
@@ -773,41 +795,33 @@ function openLightbox(index) {
   
   lb.classList.add('open');
 
-  // Download button
-  const dlBtn = document.getElementById('lbDownload');
-  dlBtn.onclick = () => {
+  // Download
+  document.getElementById('lbDownload').onclick = () => {
     const a = document.createElement('a');
     a.href = img.src;
-    a.download = c[1].replace(/[^a-z0-9]/gi,'_') + '_ShayDex.jpg';
+    a.download = c[1].replace(/[^a-z0-9]/gi, '_') + '_ShayDex.jpg';
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
   };
 
-  // Share card button
-  const shareCardBtn = document.getElementById('lbShareCard');
-  shareCardBtn.onclick = async () => {
+  // Share card
+  document.getElementById('lbShareCard').onclick = async () => {
     const shareData = { title: c[1] + ' — ShayDex', text: c[1] + ' (' + c[2] + ') from the ShayDex archive.', url: location.href };
     if (navigator.share) { try { await navigator.share(shareData); } catch(e){} }
     else {
-      try { await navigator.clipboard.writeText(location.href);
-        const t=document.createElement('div'); t.textContent='Link copied!';
-        t.style.cssText='position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:9px 20px;border-radius:999px;font-size:.82rem;z-index:999';
-        document.body.appendChild(t); setTimeout(()=>t.remove(),1500);
-      } catch(e){}
+      try {
+        await navigator.clipboard.writeText(location.href);
+        showToast('Link copied!');
+      } catch(e) {}
     }
   };
 }
 
 function navigateLightbox(dir) {
-  let next = currentLightboxIndex + dir;
-  while (next >= 0 && next < cards.length) {
-    const c = cards[next];
-    if (!MYSTERY_IDS.has(c[0]) || revealed.has(c[0])) {
-      currentLightboxIndex = next;
-      openLightbox(currentLightboxIndex);
-      return;
-    }
-    next += dir;
-  }
+  const next = ((currentLightboxIndex + dir) + cards.length) % cards.length;
+  currentLightboxIndex = next;
+  openLightbox(currentLightboxIndex);
 }
 
 function closeLightbox() {
@@ -852,22 +866,14 @@ searchInput.oninput = () => {
 };
 
 /* ---------- Collection Toggle ---------- */
-const collectionBtn = document.getElementById('collectionBtn');
-collectionBtn.onclick = () => {
-  showCollection = !showCollection;
-  collectionBtn.classList.toggle('active', showCollection);
-  renderGallery();
-};
+// Handled in init()
 
 /* ---------- Share ---------- */
 document.getElementById('shareBtn').onclick = async () => {
   const data = { title: 'ShayDex — The Gallery', text: 'Clean gallery of every Shaylen card.', url: location.href };
   if (navigator.share) { try { await navigator.share(data); } catch(e){} }
   else {
-    try { await navigator.clipboard.writeText(location.href);
-      const t = document.createElement('div'); t.textContent = 'Link copied!'; t.style.cssText='position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:9px 20px;border-radius:999px;font-size:.82rem';
-      document.body.appendChild(t); setTimeout(()=>t.remove(),1500);
-    } catch(e){}
+    try { await navigator.clipboard.writeText(location.href); showToast('Link copied!'); } catch(e){}
   }
 };
 
@@ -875,7 +881,7 @@ document.getElementById('shareBtn').onclick = async () => {
 window.openLightbox = openLightbox;
 
 function init() {
-  document.getElementById('headerCount').textContent = 'V  III';
+  document.getElementById('headerCount').textContent = 'V III';
   
   renderNewDrops();
   renderGallery();
@@ -900,18 +906,57 @@ function init() {
   document.getElementById('lightbox').onclick = (e) => {
     if (e.target.id === 'lightbox') closeLightbox();
   };
+
+  // Touch swipe for lightbox
+  let _tsX = null;
+  document.getElementById('lightbox').addEventListener('touchstart', e => {
+    _tsX = e.touches[0].clientX;
+  }, { passive: true });
+  document.getElementById('lightbox').addEventListener('touchend', e => {
+    if (_tsX === null) return;
+    const dx = e.changedTouches[0].clientX - _tsX;
+    if (Math.abs(dx) > 50) navigateLightbox(dx < 0 ? 1 : -1);
+    _tsX = null;
+  }, { passive: true });
+
+  // Collection button: update icon when toggled
+  document.getElementById('collectionBtn').addEventListener('click', () => {
+    showCollection = !showCollection;
+    document.getElementById('collectionBtn').textContent = showCollection ? '❤' : '♡';
+    document.getElementById('collectionBtn').classList.toggle('active', showCollection);
+    renderGallery();
+  });
+
+  // Rarity filter pills
+  document.getElementById('rarityFilter').addEventListener('click', e => {
+    const pill = e.target.closest('.rarity-pill');
+    if (!pill) return;
+    activeRarity = pill.dataset.rarity;
+    document.querySelectorAll('.rarity-pill').forEach(p => p.classList.toggle('active', p === pill));
+    renderGallery();
+  });
+}
+
+/* ---------- Toast ---------- */
+function showToast(msg) {
+  let t = document.getElementById('_toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = '_toast';
+    t.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(8px);background:#f0f0f0;color:#0a0a0a;padding:9px 20px;border-radius:999px;font-size:.82rem;font-family:inherit;opacity:0;transition:opacity .2s,transform .2s;z-index:999;pointer-events:none;white-space:nowrap';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  t.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => {
+    t.style.opacity = '0';
+    t.style.transform = 'translateX(-50%) translateY(8px)';
+  }, 1800);
 }
 
 init();
-
-/* ---------- Rarity Filter ---------- */
-document.getElementById('rarityFilter').addEventListener('click', e => {
-  const pill = e.target.closest('.rarity-pill');
-  if (!pill) return;
-  activeRarity = pill.dataset.rarity;
-  document.querySelectorAll('.rarity-pill').forEach(p => p.classList.toggle('active', p === pill));
-  renderGallery();
-});
 
 })();
 </script>
