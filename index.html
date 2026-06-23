@@ -1962,14 +1962,20 @@ document.getElementById('adventureBtn')?.addEventListener('click',()=>{
     <div class="arena-header">
       <button class="arena-close" id="adventureClose">✕</button>
       <h2 class="arena-title">🗺 Adventure Mode</h2>
-      <p class="arena-subtitle">Pickle Shaylen's first quest</p>
+      <p class="arena-subtitle">Choose a Shaylen and begin an adventure</p>
+<div style="margin-top:16px;text-align:center">
+<select id="adventureSelector" class="fighter-select" style="max-width:260px">
+<option value="pickle">🥒 Pickle Shaylen</option>
+<option value="baby">👶 Baby Shaylen</option>
+</select>
+</div>
     </div>
     <div style="text-align:center;padding:0 20px 20px">
-      <img id="adventurePickleImg" style="width:220px;max-width:80%;border-radius:16px;border:1px solid #333">
+      <img src="card_7.png" onerror="this.onerror=null;this.src='card_7.jpg';" style="width:220px;max-width:80%;border-radius:16px;border:1px solid #333">
     </div>
     <div id="adventureCard" style="max-width:700px;margin:auto;border:1px solid #2a2a2a;border-radius:16px;padding:20px;background:#111">
-      <h3 id="storyTitle">Chapter 1: The Pickle Portal</h3>
-      <p id="storyText">Pickle Shaylen discovers a glowing pickle jar deep beneath ShayDex Arena. A strange portal begins to open.</p>
+      <h3 id="storyTitle">Choose Your Adventure</h3>
+      <p id="storyText">Select a Shaylen above to begin their adventure.</p>
       <div id="storyChoices" style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:28px;padding-top:10px"></div>
     </div>
   </div>
@@ -1977,7 +1983,9 @@ document.getElementById('adventureBtn')?.addEventListener('click',()=>{
 
 <script>
 (function(){
-const nodes={
+
+const adventures={
+pickle:{
 0:{t:'Chapter 1: The Pickle Portal',x:'Pickle Shaylen discovers a glowing pickle jar beneath ShayDex Arena.',c:[['Open the Jar',1],['Walk Away',2],['Take It Home',6]]},
 1:{t:'Brine Dimension',x:'A portal opens into a world made entirely of pickles.',c:[['Enter the Portal',7],['Challenge the Dragon',3],['Seal the Portal',8]]},
 2:{t:'Retreat!',x:'The portal follows Pickle Shaylen.',c:[['Hide in the Arena',5],['Turn and Fight',3]]},
@@ -1987,25 +1995,51 @@ const nodes={
 6:{t:'Pickle Research',x:'At home, Shaylen studies the jar.',c:[['Open It Carefully',1],['Sell It to a Collector',10]]},
 7:{t:'The Pickle Kingdom',x:'Citizens beg you to save their king.',c:[['Accept Quest',11],['Refuse',12]]},
 8:{t:'Portal Guardian',x:'You successfully seal the rift.',c:[]},
-9:{t:'Legendary Victory',x:'The dragon is defeated and drops the Crown of Brine.',c:[]},
-10:{t:'Rich Ending',x:'You become wealthy, but never learn the jar\'s secrets.',c:[]},
+9:{t:'Legendary Victory',x:'The dragon is defeated and claims the Crown of Brine.',c:[]},
+10:{t:'Rich Ending',x:'You become wealthy but never learn the jar secrets.',c:[]},
 11:{t:'Royal Rescue',x:'The Pickle King is trapped in a cucumber castle.',c:[['Sneak In',13],['Charge the Gates',14]]},
 12:{t:'Coward Ending',x:'The kingdom falls without its hero.',c:[]},
-13:{t:'Stealth Success',x:'You rescue the king without being seen.',c:[]},
-14:{t:'Final Showdown',x:'An evil Vinegar Wizard appears.',c:[['Use the Crown of Brine',15],['Fight Normally',16]]},
+13:{t:'Stealth Success',x:'You rescue the king unseen.',c:[]},
+14:{t:'Final Showdown',x:'An evil Vinegar Wizard appears.',c:[['Use the Crown',15],['Fight Normally',16]]},
 15:{t:'True Ending',x:'You save both worlds and become a ShayDex legend.',c:[]},
-16:{t:'Bittersweet Ending',x:'You win, but the portal closes forever.',c:[]}
+16:{t:'Bittersweet Ending',x:'You win but the portal closes forever.',c:[]}
+},
+baby:{
+0:{t:'Chapter 1: Missing Teddy',x:'Baby Shaylen wakes up and discovers Teddy is gone.',c:[['Search the Crib',1],['Call for Help',2],['Follow Tiny Footprints',3]]},
+1:{t:'Under the Blanket',x:'A mysterious tunnel appears beneath the blankets.',c:[['Enter Tunnel',4],['Stay Safe',5]]},
+2:{t:'Family Meeting',x:'Everyone begins searching the house.',c:[['Check Kitchen',6],['Check Playroom',7]]},
+3:{t:'Tiny Expedition',x:'The footprints lead toward the Toy Kingdom.',c:[['Keep Going',8],['Turn Back',5]]},
+4:{t:'Blanket Caverns',x:'You discover toy goblins guarding Teddy.',c:[['Sneak Past',9],['Challenge Them',10]]},
+5:{t:'Nap Ending',x:'Baby Shaylen falls asleep and forgets the adventure.',c:[]},
+6:{t:'Cookie Discovery',x:'Teddy is not here, but cookies are.',c:[['Take Cookies',11],['Continue Search',7]]},
+7:{t:'Playroom Mystery',x:'A toy train offers to help.',c:[['Ride Train',12],['Decline',13]]},
+8:{t:'Toy Kingdom',x:'King Rubber Duck knows where Teddy is.',c:[['Accept Quest',14],['Refuse',13]]},
+9:{t:'Stealth Ending',x:'You rescue Teddy without anyone noticing.',c:[]},
+10:{t:'Rattle Battle',x:'A dramatic toy battle begins.',c:[['Fight On',15],['Make Peace',16]]},
+11:{t:'Sugar Rush',x:'The cookies make you unstoppable.',c:[]},
+12:{t:'Express Rescue',x:'The train speeds you toward Teddy.',c:[['Final Rescue',14]]},
+13:{t:'Lost Opportunity',x:'The trail goes cold.',c:[]},
+14:{t:'Teddy Throne Room',x:'Teddy sits upon a golden toy throne.',c:[['Bring Teddy Home',17],['Crown Teddy King',18]]},
+15:{t:'Victory Ending',x:'The toy goblins are defeated.',c:[]},
+16:{t:'Friendship Ending',x:'Everyone becomes friends.',c:[]},
+17:{t:'True Ending',x:'Teddy returns home and Baby Shaylen becomes a hero.',c:[]},
+18:{t:'Royal Ending',x:'Teddy rules the Toy Kingdom forever.',c:[]}
+}
 };
 
+let currentAdventure='pickle';
+
+function getNodes(){ return adventures[currentAdventure]; }
+
 function renderNode(id){
- let n=nodes[id];
+ let n=getNodes()[id];
  storyTitle.textContent=n.t;
  storyText.textContent=n.x;
  storyChoices.innerHTML='';
  if(!n.c.length){
    let b=document.createElement('button');
    b.className='battle-btn';
-   b.style.minWidth='240px';b.style.margin='8px';b.style.whiteSpace='normal';
+   b.style.minWidth='240px'; b.style.margin='8px';
    b.textContent='Restart Adventure';
    b.onclick=()=>renderNode(0);
    storyChoices.appendChild(b);
@@ -2014,31 +2048,22 @@ function renderNode(id){
  n.c.forEach(ch=>{
    let b=document.createElement('button');
    b.className='battle-btn';
-   b.style.minWidth='240px';b.style.margin='8px';b.style.whiteSpace='normal';
+   b.style.minWidth='240px'; b.style.margin='8px'; b.style.whiteSpace='normal';
    b.textContent=ch[0];
    b.onclick=()=>renderNode(ch[1]);
    storyChoices.appendChild(b);
  });
 }
 
-window.openAdventure=()=>{
+document.getElementById('adventureSelector')?.addEventListener('change',e=>{
+ currentAdventure=e.target.value;
+ renderNode(0);
+});
+
+window.openAdventure=
+()=>{
  document.getElementById('adventureModal').classList.add('open');
  document.body.style.overflow='hidden';
-
- const advImg=document.getElementById('adventurePickleImg');
- if(advImg){
-   const tries=['card_7.jpeg','card_7.jpg','card_7.png','card_7.JPEG','card_7.JPG','card_7.PNG'];
-   let i=0;
-   const tryNext=()=>{
-     if(i>=tries.length) return;
-     const test=new Image();
-     test.onload=()=>advImg.src=tries[i];
-     test.onerror=()=>{i++;tryNext();};
-     test.src=tries[i];
-   };
-   tryNext();
- }
-
  renderNode(0);
 };
 
