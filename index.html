@@ -1965,12 +1965,12 @@ document.getElementById('adventureBtn')?.addEventListener('click',()=>{
       <p class="arena-subtitle">Pickle Shaylen's first quest</p>
     </div>
     <div style="text-align:center;padding:0 20px 20px">
-      <img src="card_7.png" style="width:220px;max-width:80%;border-radius:16px;border:1px solid #333">
+      <img src="card_7.png" onerror="this.onerror=null;this.src='card_7.jpg';" style="width:220px;max-width:80%;border-radius:16px;border:1px solid #333">
     </div>
     <div id="adventureCard" style="max-width:700px;margin:auto;border:1px solid #2a2a2a;border-radius:16px;padding:20px;background:#111">
       <h3 id="storyTitle">Chapter 1: The Pickle Portal</h3>
       <p id="storyText">Pickle Shaylen discovers a glowing pickle jar deep beneath ShayDex Arena. A strange portal begins to open.</p>
-      <div id="storyChoices" style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center"></div>
+      <div id="storyChoices" style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:28px;padding-top:10px"></div>
     </div>
   </div>
 </div>
@@ -1978,12 +1978,23 @@ document.getElementById('adventureBtn')?.addEventListener('click',()=>{
 <script>
 (function(){
 const nodes={
-0:{t:'Chapter 1: The Pickle Portal',x:'Pickle Shaylen discovers a glowing pickle jar deep beneath ShayDex Arena. A strange portal begins to open.',c:[['Open the Jar',1],['Walk Away',2]]},
-1:{t:'Brine Dimension',x:'The jar explodes with pickle energy. A Brine Dragon appears.',c:[['Challenge the Dragon',3],['Offer a Pickle',4]]},
+0:{t:'Chapter 1: The Pickle Portal',x:'Pickle Shaylen discovers a glowing pickle jar beneath ShayDex Arena.',c:[['Open the Jar',1],['Walk Away',2],['Take It Home',6]]},
+1:{t:'Brine Dimension',x:'A portal opens into a world made entirely of pickles.',c:[['Enter the Portal',7],['Challenge the Dragon',3],['Seal the Portal',8]]},
 2:{t:'Retreat!',x:'The portal follows Pickle Shaylen.',c:[['Hide in the Arena',5],['Turn and Fight',3]]},
-3:{t:'Hero Ending',x:'Pickle Shaylen becomes Guardian of the Brine Realm.',c:[]},
-4:{t:'Friendship Ending',x:'The dragon accepts the pickle. Peace is restored.',c:[]},
-5:{t:'Chaos Ending',x:'The Arena becomes a giant pickle factory.',c:[]}
+3:{t:'Battle of Brine Peak',x:'The Brine Dragon towers overhead.',c:[['Attack',9],['Negotiate',4]]},
+4:{t:'Friendship Ending',x:'The dragon accepts a peace pickle. The realms unite.',c:[]},
+5:{t:'Chaos Ending',x:'The Arena becomes a giant pickle factory.',c:[]},
+6:{t:'Pickle Research',x:'At home, Shaylen studies the jar.',c:[['Open It Carefully',1],['Sell It to a Collector',10]]},
+7:{t:'The Pickle Kingdom',x:'Citizens beg you to save their king.',c:[['Accept Quest',11],['Refuse',12]]},
+8:{t:'Portal Guardian',x:'You successfully seal the rift.',c:[]},
+9:{t:'Legendary Victory',x:'The dragon is defeated and drops the Crown of Brine.',c:[]},
+10:{t:'Rich Ending',x:'You become wealthy, but never learn the jar\'s secrets.',c:[]},
+11:{t:'Royal Rescue',x:'The Pickle King is trapped in a cucumber castle.',c:[['Sneak In',13],['Charge the Gates',14]]},
+12:{t:'Coward Ending',x:'The kingdom falls without its hero.',c:[]},
+13:{t:'Stealth Success',x:'You rescue the king without being seen.',c:[]},
+14:{t:'Final Showdown',x:'An evil Vinegar Wizard appears.',c:[['Use the Crown of Brine',15],['Fight Normally',16]]},
+15:{t:'True Ending',x:'You save both worlds and become a ShayDex legend.',c:[]},
+16:{t:'Bittersweet Ending',x:'You win, but the portal closes forever.',c:[]}
 };
 
 function renderNode(id){
