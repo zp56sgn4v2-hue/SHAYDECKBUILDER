@@ -1558,64 +1558,83 @@ function runBattle() {
 
 
 
+
 async function generateBattleShareImage(idA,idB,nameA,nameB,winner,storyText){
  const canvas=document.createElement('canvas');
- canvas.width=1080;
- canvas.height=1350;
+ canvas.width=1080; canvas.height=1350;
  const ctx=canvas.getContext('2d');
 
- ctx.fillStyle='#0b0b0b';
+ const bg=ctx.createLinearGradient(0,0,0,1350);
+ bg.addColorStop(0,'#050505');
+ bg.addColorStop(1,'#111');
+ ctx.fillStyle=bg;
  ctx.fillRect(0,0,1080,1350);
 
  ctx.strokeStyle='#f5c842';
- ctx.lineWidth=3;
- ctx.strokeRect(30,30,1020,1290);
-
- ctx.fillStyle='#f5c842';
- ctx.font='bold 54px sans-serif';
- ctx.textAlign='center';
- ctx.fillText('THE ARENA',540,90);
+ ctx.lineWidth=4;
+ ctx.strokeRect(20,20,1040,1310);
 
  function load(src){return new Promise(r=>{const i=new Image();i.crossOrigin='anonymous';i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src;});}
 
  const aimg=await load(imgCache['card_'+idA]||('card_'+idA+'.jpg'));
  const bimg=await load(imgCache['card_'+idB]||('card_'+idB+'.jpg'));
 
- if(aimg) ctx.drawImage(aimg,120,170,350,490);
- if(bimg) ctx.drawImage(bimg,610,170,350,490);
+ const winnerName = winner==='TIE' ? 'DRAW' : (winner==='A' ? nameA : nameB);
+ const winnerImg = winner==='B' ? bimg : aimg;
+ const loserImg  = winner==='B' ? aimg : bimg;
+ const loserName = winner==='B' ? nameA : nameB;
 
- ctx.fillStyle='#ffffff';
+ ctx.textAlign='center';
+ ctx.fillStyle='#f5c842';
  ctx.font='bold 64px sans-serif';
- ctx.fillText('VS',540,450);
+ ctx.fillText('THE ARENA',540,85);
 
- const winnerName=winner==='TIE'?'DRAW':(winner==='A'?nameA:nameB);
+ if(winnerImg){
+   ctx.save();
+   ctx.shadowColor='#f5c842';
+   ctx.shadowBlur=60;
+   ctx.drawImage(winnerImg,240,120,600,840);
+   ctx.restore();
+ }
+
+ if(loserImg){
+   ctx.save();
+   ctx.globalAlpha=.45;
+   ctx.drawImage(loserImg,40,620,220,308);
+   ctx.restore();
+ }
 
  ctx.fillStyle='#f5c842';
- ctx.fillRect(80,730,920,90);
+   ctx.font='bold 40px sans-serif';
+   ctx.fillText('🏆 CHAMPION OF THE ARENA 🏆',540,1010);
 
- ctx.fillStyle='#000';
- ctx.font='bold 42px sans-serif';
- ctx.fillText('WINNER: '+winnerName.toUpperCase(),540,790);
+ ctx.fillStyle='#fff';
+ ctx.font='bold 72px sans-serif';
+ ctx.fillText(winnerName.toUpperCase(),540,1090);
+
+ ctx.fillStyle='#999';
+ ctx.font='28px sans-serif';
+ ctx.fillText('Defeated '+loserName,540,1130);
 
  ctx.textAlign='left';
- ctx.fillStyle='#ffffff';
- ctx.font='bold 36px sans-serif';
- ctx.fillText('Battle Summary',90,900);
+ ctx.fillStyle='#fff';
+ ctx.font='bold 34px sans-serif';
+ ctx.fillText('BATTLE RECAP',70,1190);
 
  const temp=document.createElement('div');
  temp.innerHTML=storyText||'';
- const summary=(temp.textContent||'').split('.').map(s=>s.trim()).filter(Boolean).slice(0,3);
+ const lines=(temp.textContent||'').split('.').map(x=>x.trim()).filter(Boolean).slice(0,3);
 
- ctx.font='30px sans-serif';
- let y=970;
- summary.forEach(line=>{
-   const text='• '+line;
-   ctx.fillText(text.length>55?text.slice(0,55)+'...':text,100,y);
-   y+=70;
+ ctx.font='28px sans-serif';
+ let y=1240;
+ lines.forEach(line=>{
+   ctx.fillText('⚡ '+line.substring(0,60),80,y);
+   y+=42;
  });
 
- return await new Promise(r=>canvas.toBlob(b=>r(new File([b],'arena-share-simple.png',{type:'image/png'}))));
+ return await new Promise(r=>canvas.toBlob(b=>r(new File([b],'arena-share-epic.png',{type:'image/png'}))));
 }
+
 
 function showBattleResult(idA, idB, nameA, nameB) {
   const { paragraphs, winner } = buildBattleStory(nameA, nameB);
