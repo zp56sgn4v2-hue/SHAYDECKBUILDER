@@ -1374,6 +1374,22 @@ function showToast(msg) {
    ARENA / BATTLE SYSTEM
 ══════════════════════════════════════════ */
 
+
+const CARD_ABILITIES = {
+"Pickle Shaylen":["unleashes a Brine Blast","activates Dill Fury","throws fermented pickle spears","creates a Vinegar Cloud"],
+"Hangry Shaylen":["enters Snackless Rage","uses Hunger Frenzy","unleashes a Craving Strike","activates Mood Swing Combo"],
+"Hungry Shaylen":["finds emergency chicken nuggets","uses Buffet Rush","activates Infinite Appetite","launches Fry Detection"],
+"Groovin’ Shaylen":["drops a Funk Wave","uses Disco Dodge","activates Groove Boost","unleashes a Boogie Counterattack"],
+"Sunburnt Shaylen":["fires a Solar Flare","activates Lobster Mode","uses UV Burst","recovers with Aloe Recovery"],
+"Beaver Shaylen":["uses Dam Slam","launches logs across the arena","attacks with Tail Whip","activates River Control"],
+"Dragon Shaylen":["breathes fire","uses Inferno Dive","activates Ancient Roar","summons Meteor Flame"],
+"Princess Shaylen":["issues a Royal Decree","uses Glitter Barrage","strikes with Crown Strike","activates Kingdom Buff"]
+};
+function getAbility(name){
+ const arr=CARD_ABILITIES[name];
+ return arr?arr[Math.floor(Math.random()*arr.length)]:"uses pure Shaylen energy";
+}
+
 const BATTLE_OPENER = [
   "The crowd goes absolutely silent.",
   "The arena lights dim. A hush falls over the audience.",
@@ -1440,6 +1456,8 @@ function fill(str, a, b) { return str.replace(/{A}/g, `<strong>${a}</strong>`).r
 
 function buildBattleStory(nameA, nameB) {
   const opener = pick(BATTLE_OPENER);
+  const abilityA = `<p><strong>${nameA}</strong> ${getAbility(nameA)}.</p>`;
+  const abilityB = `<p><strong>${nameB}</strong> ${getAbility(nameB)}.</p>`;
   const moveSet = pick(BATTLE_MOVES);
   const roll = Math.random();
   let winner, finisher;
@@ -1454,7 +1472,7 @@ function buildBattleStory(nameA, nameB) {
     finisher = pick(BATTLE_FINISH.TIE);
   }
 
-  const paragraphs = [opener, ...moveSet, finisher]
+  const paragraphs = [opener, abilityA, abilityB, ...moveSet, finisher]
     .map(line => `<p>${fill(line, nameA, nameB)}</p>`)
     .join('');
 
@@ -1523,6 +1541,26 @@ function runBattle() {
   }, 1100);
 }
 
+
+async function generateBattleShareImage(idA,idB,nameA,nameB,winner,storyText){
+ const canvas=document.createElement('canvas');
+ canvas.width=1080; canvas.height=1350;
+ const ctx=canvas.getContext('2d');
+ ctx.fillStyle='#0a0a0a'; ctx.fillRect(0,0,canvas.width,canvas.height);
+ ctx.fillStyle='#f5c842'; ctx.font='bold 54px sans-serif';
+ ctx.fillText('SHAYDEX ARENA',320,80);
+ ctx.fillStyle='#fff'; ctx.font='38px sans-serif';
+ ctx.fillText(nameA+'  ⚔  '+nameB,120,140);
+ ctx.fillText('Winner: '+(winner==='TIE'?'Draw':(winner==='A'?nameA:nameB)),120,200);
+ ctx.font='28px sans-serif';
+ const lines=(storyText||'').replace(/<[^>]+>/g,'').match(/.{1,55}/g)||[];
+ let y=280; lines.slice(0,20).forEach(l=>{ctx.fillText(l,60,y); y+=42;});
+ return await new Promise(r=>canvas.toBlob(async b=>{
+   const f=new File([b],'shaydex-battle.png',{type:'image/png'});
+   r(f);
+ }));
+}
+
 function showBattleResult(idA, idB, nameA, nameB) {
   const { paragraphs, winner } = buildBattleStory(nameA, nameB);
 
@@ -1563,6 +1601,11 @@ function showBattleResult(idA, idB, nameA, nameB) {
 
   // Share battle result
   document.getElementById('shareBattleBtn').onclick = async () => {
+    const file = await generateBattleShareImage(idA,idB,nameA,nameB,winner,paragraphs);
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      try{ await navigator.share({files:[file],title:'ShayDex Arena Battle'}); }catch(e){}
+      return;
+    }
     const winText = winner === 'TIE'
       ? `${nameA} vs ${nameB} — It's a Draw! 🤝`
       : `${winner === 'A' ? nameA : nameB} defeats ${winner === 'A' ? nameB : nameA}! 🏆`;
