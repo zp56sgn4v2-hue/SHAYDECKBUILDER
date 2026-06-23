@@ -1565,12 +1565,21 @@ async function generateBattleShareImage(idA,idB,nameA,nameB,winner,storyText){
  canvas.width=1080; canvas.height=1350;
  const ctx=canvas.getContext('2d');
 
- const bg=ctx.createRadialGradient(540,500,50,540,700,1000);
+ 
+const bg=ctx.createRadialGradient(540,500,50,540,700,1000);
+
  bg.addColorStop(0,'#202020');
  bg.addColorStop(.5,'#0b0b0b');
  bg.addColorStop(1,'#000000');
  ctx.fillStyle=bg;
  ctx.fillRect(0,0,1080,1350);
+for(let i=0;i<35;i++){
+ ctx.fillStyle='rgba(255,255,255,0.03)';
+ ctx.beginPath();
+ ctx.arc(Math.random()*1080,Math.random()*1350,Math.random()*180+80,0,Math.PI*2);
+ ctx.fill();
+}
+
 
  function load(src){return new Promise(r=>{const i=new Image();i.crossOrigin='anonymous';i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src;});}
 
@@ -1582,11 +1591,11 @@ async function generateBattleShareImage(idA,idB,nameA,nameB,winner,storyText){
 
  ctx.textAlign='center';
  ctx.fillStyle='#f5c842';
- ctx.font='bold 60px sans-serif';
+ ctx.font='900 68px Georgia';
  ctx.fillText('⚔ THE ARENA ⚔',540,90);
 
  ctx.fillStyle='#9f9f9f';
- ctx.font='28px sans-serif';
+ ctx.font='italic 30px Georgia';
  ctx.fillText('LEGENDARY BATTLE',540,130);
 
  if(aimg){
@@ -1609,7 +1618,7 @@ async function generateBattleShareImage(idA,idB,nameA,nameB,winner,storyText){
 
  ctx.fillStyle='#f5c842';
  ctx.font='bold 40px sans-serif';
- ctx.fillText('🏆 VICTORIOUS 🏆',540,860);
+ ctx.fillText('🏆 ARENA CHAMPION 🏆',540,860);
 
  ctx.fillStyle='#fff';
  ctx.font='bold 72px sans-serif';
@@ -1817,6 +1826,21 @@ showBattleResult=function(idA,idB,nameA,nameB){
 init();
 
 })();
+
+const ARENA_CATCHPHRASES = {
+ default:[
+  "Dominated the battlefield and left no doubt.",
+  "Rose above the chaos to claim eternal glory.",
+  "Turned the tide and seized the Arena Crown."
+ ]
+};
+
+function getArenaCatchphrase(cardName){
+ const key=(cardName||'').toLowerCase().trim();
+ const list=ARENA_CATCHPHRASES[key] || ARENA_CATCHPHRASES.default;
+ return list[Math.floor(Math.random()*list.length)];
+}
+
 </script>
 </body>
 </html>
