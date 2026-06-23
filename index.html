@@ -868,6 +868,43 @@ header {
 .power-fill{height:100%;background:#f5c842;width:50%}
 @media(max-width:700px){.arena-dashboard{grid-template-columns:repeat(2,1fr)}}
 
+
+/* V4.5 VISUAL UPGRADE */
+body::before{
+content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;
+background:
+radial-gradient(circle at 20% 20%,rgba(245,200,66,.08),transparent 35%),
+radial-gradient(circle at 80% 30%,rgba(96,165,250,.06),transparent 30%),
+radial-gradient(circle at 50% 80%,rgba(179,136,255,.05),transparent 35%);
+animation:bgFloat 18s ease-in-out infinite alternate;
+}
+@keyframes bgFloat{from{transform:translateY(0)}to{transform:translateY(-30px)}}
+.card{transform-style:preserve-3d}
+.card::after{
+content:"";position:absolute;inset:0;
+background:linear-gradient(120deg,transparent 20%,rgba(255,255,255,.08) 45%,transparent 70%);
+transform:translateX(-120%);transition:1s;
+}
+.card:hover::after{transform:translateX(120%)}
+.drop-img-wrap::before,.fighter-card-preview::before{
+content:"";position:absolute;inset:-2px;
+background:conic-gradient(from 0deg,var(--accent),transparent,var(--accent));
+opacity:.15;animation:spinRing 8s linear infinite;
+}
+@keyframes spinRing{to{transform:rotate(360deg)}}
+.arena-title{
+text-shadow:0 0 20px rgba(245,200,66,.4),0 0 50px rgba(245,200,66,.2);
+}
+.vs-circle{
+box-shadow:0 0 20px rgba(245,200,66,.25);
+animation:pulseVS 2s infinite;
+}
+@keyframes pulseVS{50%{transform:scale(1.08)}}
+.winner-announcement{
+background:linear-gradient(180deg,rgba(245,200,66,.08),transparent);
+padding:16px;border-radius:16px;
+}
+
 </style>
 </head>
 <body>
@@ -1850,6 +1887,17 @@ showBattleResult=function(idA,idB,nameA,nameB){
 };
 
 init();
+
+
+document.querySelectorAll('.card').forEach((card)=>{
+ card.addEventListener('mousemove',(e)=>{
+  const r=card.getBoundingClientRect();
+  const x=(e.clientX-r.left)/r.width;
+  const y=(e.clientY-r.top)/r.height;
+  card.style.transform=`perspective(800px) rotateY(${(x-.5)*10}deg) rotateX(${(.5-y)*10}deg) translateY(-7px)`;
+ });
+ card.addEventListener('mouseleave',()=>card.style.transform='');
+});
 
 })();
 
