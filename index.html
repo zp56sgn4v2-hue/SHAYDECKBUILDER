@@ -519,7 +519,23 @@ header {
 
 <style id="arena-upgrade">
 #arenaModal{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px}#arenaModal.open{display:flex}.arena-box{max-width:800px;width:100%;background:#111;border:1px solid #d4a74e;border-radius:18px;padding:24px;color:#fff}.arena-title{text-align:center;color:#d4a74e;font-size:2rem;margin-bottom:16px}.arena-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center}.arena-grid select,.arena-grid button{padding:12px;border-radius:10px;background:#1a1a1a;color:#fff;border:1px solid #333}.arena-grid button{cursor:pointer}.battle-story{margin-top:20px;line-height:1.6;white-space:pre-wrap}.winner{color:#d4a74e;font-weight:bold}.closeArena{float:right;cursor:pointer}
-</style></head>
+</style>
+<style>
+#arenaModal{position:fixed;inset:0;background:rgba(0,0,0,.92);backdrop-filter:blur(12px);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px}
+#arenaModal.open{display:flex}
+.arena-panel{max-width:1000px;width:100%;background:#111;border:1px solid #333;border-radius:20px;padding:24px;color:#fff}
+.arena-title{text-align:center;font-size:2rem;margin-bottom:10px;color:#f5c842}
+.arena-sub{text-align:center;color:#999;margin-bottom:20px}
+.arena-match{display:flex;justify-content:center;align-items:center;gap:20px;flex-wrap:wrap}
+.arena-card img{width:140px;height:196px;object-fit:cover;border-radius:12px}
+.arena-vs{font-size:2rem;color:#f5c842}
+#battleStory{margin-top:20px;background:#181818;padding:16px;border-radius:12px;min-height:120px;white-space:pre-wrap}
+.arena-actions{display:flex;gap:10px;justify-content:center;margin-top:15px;flex-wrap:wrap}
+.arena-btn{background:#f5c842;color:#000;border:none;padding:10px 18px;border-radius:999px;font-weight:bold;cursor:pointer}
+#battleHistory{margin-top:15px;color:#aaa;font-size:.9rem}
+</style>
+
+</head>
 <body>
 
 <!-- Slim Header -->
@@ -984,5 +1000,56 @@ ${n1} ${p[Math.floor(Math.random()*p.length)]}.
 ${n2} ${p[Math.floor(Math.random()*p.length)]}.
 The crowd erupted as the battle reached its climax.
 
-🏆 WINNER: ${winner}`;};});</script></body>
+🏆 WINNER: ${winner}`;};});</script>
+<div id="arenaModal">
+<div class="arena-panel">
+<div class="arena-title">⚔ THE ARENA</div>
+<div class="arena-sub">Where Legends Clash</div>
+<div class="arena-match">
+<div class="arena-card"><select id="fighterA"></select><br><img id="imgA"></div>
+<div class="arena-vs">VS</div>
+<div class="arena-card"><select id="fighterB"></select><br><img id="imgB"></div>
+</div>
+<div class="arena-actions">
+<button class="arena-btn" id="startBattle">BEGIN THE BATTLE</button>
+<button class="arena-btn" id="rematchBtn">REMATCH</button>
+<button class="arena-btn" id="shareBattle">SHARE</button>
+<button class="arena-btn" id="closeArena">CLOSE</button>
+</div>
+<div id="battleStory"></div>
+<div id="battleHistory"></div>
+</div></div>
+
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+const arenaBtn=document.getElementById('arenaBtn')||document.querySelector('[data-arena],#arenaButton');
+if(!arenaBtn)return;
+const modal=document.getElementById('arenaModal');
+const a=document.getElementById('fighterA'), b=document.getElementById('fighterB');
+const imgA=document.getElementById('imgA'), imgB=document.getElementById('imgB');
+const cards=[...document.querySelectorAll('img[alt]')].map(i=>({name:i.alt,src:i.src})).filter(c=>c.name);
+const unique=[]; const seen=new Set(); cards.forEach(c=>{if(!seen.has(c.name)){seen.add(c.name);unique.push(c)}});
+unique.forEach(c=>{a.add(new Option(c.name,c.name)); b.add(new Option(c.name,c.name));});
+function upd(){let ca=unique.find(x=>x.name===a.value), cb=unique.find(x=>x.name===b.value); if(ca)imgA.src=ca.src; if(cb)imgB.src=cb.src;}
+a.onchange=upd;b.onchange=upd; upd();
+arenaBtn.onclick=()=>modal.classList.add('open');
+closeArena.onclick=()=>modal.classList.remove('open');
+const arenas=['Golden Colosseum','Haunted Archive','Pickle Kingdom','The Void','Castle of Legends','Mystic Forest'];
+function battle(){
+const loc=arenas[Math.floor(Math.random()*arenas.length)];
+const winner=Math.random()>.5?a.value:b.value;
+const loser=winner===a.value?b.value:a.value;
+const events=['unleashed a legendary attack','dodged through chaos','summoned unexpected energy','charged forward fearlessly'];
+const story=`⚔ Location: ${loc}\n\n${a.value} and ${b.value} entered the arena. ${winner} ${events[Math.floor(Math.random()*events.length)]} while ${loser} fought bravely. The crowd erupted as the battle reached its climax.\n\n🏆 WINNER: ${winner}`;
+battleStory.textContent=story;
+let h=JSON.parse(localStorage.getItem('arenaHistory')||'[]');
+h.unshift(`${winner} defeated ${loser} @ ${loc}`); h=h.slice(0,10);
+localStorage.setItem('arenaHistory',JSON.stringify(h));
+battleHistory.innerHTML='<b>Recent Battles</b><br>'+h.join('<br>');
+}
+startBattle.onclick=battle; rematchBtn.onclick=battle;
+shareBattle.onclick=()=>navigator.clipboard.writeText(battleStory.textContent);
+});
+</script>
+</body>
 </html>
