@@ -1955,53 +1955,74 @@ document.getElementById('adventureBtn')?.addEventListener('click',()=>{
 });
 </script>
 
-<!-- SHAYDEX V IV ADVENTURE PROTOTYPE -->
-<div id="adventurePrototype" style="padding:40px 24px;border-top:1px solid #222;background:#0d0d0d">
-<h2 style="color:#f5c842;margin-bottom:10px">⚡ ShayDex V IV Prototype: Pickle Shaylen Adventure</h2>
-<p style="color:#aaa;max-width:700px;margin-bottom:20px">A choose-your-own-adventure concept where cards become playable characters.</p>
-<div id="adventureCard" style="max-width:700px;border:1px solid #2a2a2a;border-radius:16px;padding:20px;background:#111">
-<img src="card_7.png" onerror="this.onerror=null;this.src='card_7.jpg'" alt="Pickle Shaylen" style="width:220px;max-width:100%;display:block;margin:0 auto 16px;border-radius:12px;border:1px solid #333;">
-<h3 id="storyTitle">Chapter 1: The Pickle Portal</h3>
-<p id="storyText">Pickle Shaylen discovers a glowing pickle jar deep beneath ShayDex Arena. A strange portal begins to open.</p>
-<div id="storyChoices" style="display:flex;gap:10px;flex-wrap:wrap">
-<button onclick="nextAdventure(1)" class="battle-btn">Open the jar</button>
-<button onclick="nextAdventure(2)" class="battle-btn secondary">Run away</button>
+
+<!-- ADVENTURE MODAL -->
+<div id="adventureModal" class="arena-modal">
+  <div class="arena-inner">
+    <div class="arena-header">
+      <button class="arena-close" id="adventureClose">✕</button>
+      <h2 class="arena-title">🗺 Adventure Mode</h2>
+      <p class="arena-subtitle">Pickle Shaylen's first quest</p>
+    </div>
+    <div style="text-align:center;padding:0 20px 20px">
+      <img src="card_7.png" style="width:220px;max-width:80%;border-radius:16px;border:1px solid #333">
+    </div>
+    <div id="adventureCard" style="max-width:700px;margin:auto;border:1px solid #2a2a2a;border-radius:16px;padding:20px;background:#111">
+      <h3 id="storyTitle">Chapter 1: The Pickle Portal</h3>
+      <p id="storyText">Pickle Shaylen discovers a glowing pickle jar deep beneath ShayDex Arena. A strange portal begins to open.</p>
+      <div id="storyChoices" style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center"></div>
+    </div>
+  </div>
 </div>
-</div>
-</div>
+
 <script>
 (function(){
-const adventureNodes={
-1:{title:'Chapter 2A: Brine Dimension',text:'The jar explodes with pickle energy. A Brine Dragon appears.',choices:[
-['Challenge the dragon',3],['Offer it a pickle',4]
-]},
-2:{title:'Chapter 2B: Retreat!',text:'Pickle Shaylen runs... but the portal follows.',choices:[
-['Hide in the Arena',5],['Turn around and fight',3]
-]},
-3:{title:'Ending: Hero Route',text:'Pickle Shaylen defeats the threat and becomes Guardian of the Brine Realm.',choices:[]},
-4:{title:'Ending: Friendship Route',text:'The dragon accepts the pickle. Peace is restored.',choices:[]},
-5:{title:'Ending: Chaos Route',text:'The Arena is transformed into a giant pickle factory.',choices:[]}
-]};
-window.nextAdventure=function(id){
- const n=adventureNodes[id];
- document.getElementById('storyTitle').textContent=n.title;
- document.getElementById('storyText').textContent=n.text;
- const c=document.getElementById('storyChoices');
- c.innerHTML='';
- if(!n.choices.length){
-   c.innerHTML='<button class="battle-btn" onclick="location.reload()">Restart Adventure</button>';
+const nodes={
+0:{t:'Chapter 1: The Pickle Portal',x:'Pickle Shaylen discovers a glowing pickle jar deep beneath ShayDex Arena. A strange portal begins to open.',c:[['Open the Jar',1],['Walk Away',2]]},
+1:{t:'Brine Dimension',x:'The jar explodes with pickle energy. A Brine Dragon appears.',c:[['Challenge the Dragon',3],['Offer a Pickle',4]]},
+2:{t:'Retreat!',x:'The portal follows Pickle Shaylen.',c:[['Hide in the Arena',5],['Turn and Fight',3]]},
+3:{t:'Hero Ending',x:'Pickle Shaylen becomes Guardian of the Brine Realm.',c:[]},
+4:{t:'Friendship Ending',x:'The dragon accepts the pickle. Peace is restored.',c:[]},
+5:{t:'Chaos Ending',x:'The Arena becomes a giant pickle factory.',c:[]}
+};
+
+function renderNode(id){
+ let n=nodes[id];
+ storyTitle.textContent=n.t;
+ storyText.textContent=n.x;
+ storyChoices.innerHTML='';
+ if(!n.c.length){
+   let b=document.createElement('button');
+   b.className='battle-btn';
+   b.style.minWidth='220px';
+   b.textContent='Restart Adventure';
+   b.onclick=()=>renderNode(0);
+   storyChoices.appendChild(b);
    return;
  }
- n.choices.forEach(ch=>{
-   const b=document.createElement('button');
-   b.className='battle-btn secondary';
+ n.c.forEach(ch=>{
+   let b=document.createElement('button');
+   b.className='battle-btn';
+   b.style.minWidth='220px';
    b.textContent=ch[0];
-   b.onclick=()=>nextAdventure(ch[1]);
-   c.appendChild(b);
+   b.onclick=()=>renderNode(ch[1]);
+   storyChoices.appendChild(b);
  });
 }
+
+window.openAdventure=()=>{
+ document.getElementById('adventureModal').classList.add('open');
+ document.body.style.overflow='hidden';
+ renderNode(0);
+};
+
+document.getElementById('adventureClose')?.addEventListener('click',()=>{
+ document.getElementById('adventureModal').classList.remove('open');
+ document.body.style.overflow='';
+});
+
+document.getElementById('adventureBtn')?.addEventListener('click',()=>openAdventure());
 })();
 </script>
-
 </body>
 </html>
