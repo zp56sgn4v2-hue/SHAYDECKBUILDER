@@ -1965,7 +1965,7 @@ document.getElementById('adventureBtn')?.addEventListener('click',()=>{
       <p class="arena-subtitle">Pickle Shaylen's first quest</p>
     </div>
     <div style="text-align:center;padding:0 20px 20px">
-      <img src="card_7.png" onerror="this.onerror=null;this.src='card_7.jpg';" style="width:220px;max-width:80%;border-radius:16px;border:1px solid #333">
+      <img id="adventurePickleImg" style="width:220px;max-width:80%;border-radius:16px;border:1px solid #333">
     </div>
     <div id="adventureCard" style="max-width:700px;margin:auto;border:1px solid #2a2a2a;border-radius:16px;padding:20px;background:#111">
       <h3 id="storyTitle">Chapter 1: The Pickle Portal</h3>
@@ -2005,7 +2005,7 @@ function renderNode(id){
  if(!n.c.length){
    let b=document.createElement('button');
    b.className='battle-btn';
-   b.style.minWidth='220px';
+   b.style.minWidth='240px';b.style.margin='8px';b.style.whiteSpace='normal';
    b.textContent='Restart Adventure';
    b.onclick=()=>renderNode(0);
    storyChoices.appendChild(b);
@@ -2014,7 +2014,7 @@ function renderNode(id){
  n.c.forEach(ch=>{
    let b=document.createElement('button');
    b.className='battle-btn';
-   b.style.minWidth='220px';
+   b.style.minWidth='240px';b.style.margin='8px';b.style.whiteSpace='normal';
    b.textContent=ch[0];
    b.onclick=()=>renderNode(ch[1]);
    storyChoices.appendChild(b);
@@ -2024,6 +2024,21 @@ function renderNode(id){
 window.openAdventure=()=>{
  document.getElementById('adventureModal').classList.add('open');
  document.body.style.overflow='hidden';
+
+ const advImg=document.getElementById('adventurePickleImg');
+ if(advImg){
+   const tries=['card_7.jpeg','card_7.jpg','card_7.png','card_7.JPEG','card_7.JPG','card_7.PNG'];
+   let i=0;
+   const tryNext=()=>{
+     if(i>=tries.length) return;
+     const test=new Image();
+     test.onload=()=>advImg.src=tries[i];
+     test.onerror=()=>{i++;tryNext();};
+     test.src=tries[i];
+   };
+   tryNext();
+ }
+
  renderNode(0);
 };
 
