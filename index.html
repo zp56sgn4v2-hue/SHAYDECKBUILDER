@@ -515,26 +515,350 @@ header {
   font-size: .75rem;
   letter-spacing: .08em;
 }
-</style>
+/* ══════════════════════════════════════════
+   ARENA ICON BUTTON
+══════════════════════════════════════════ */
+.arena-icon-btn {
+  color: var(--accent) !important;
+  font-size: 1rem;
+}
+.arena-icon-btn:hover {
+  background: rgba(245,200,66,.12) !important;
+}
 
-<style id="arena-upgrade">
-#arenaModal{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px}#arenaModal.open{display:flex}.arena-box{max-width:800px;width:100%;background:#111;border:1px solid #d4a74e;border-radius:18px;padding:24px;color:#fff}.arena-title{text-align:center;color:#d4a74e;font-size:2rem;margin-bottom:16px}.arena-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center}.arena-grid select,.arena-grid button{padding:12px;border-radius:10px;background:#1a1a1a;color:#fff;border:1px solid #333}.arena-grid button{cursor:pointer}.battle-story{margin-top:20px;line-height:1.6;white-space:pre-wrap}.winner{color:#d4a74e;font-weight:bold}.closeArena{float:right;cursor:pointer}
-</style>
-<style>
-#arenaModal{position:fixed;inset:0;background:rgba(0,0,0,.92);backdrop-filter:blur(12px);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px}
-#arenaModal.open{display:flex}
-.arena-panel{max-width:1000px;width:100%;background:#111;border:1px solid #333;border-radius:20px;padding:24px;color:#fff}
-.arena-title{text-align:center;font-size:2rem;margin-bottom:10px;color:#f5c842}
-.arena-sub{text-align:center;color:#999;margin-bottom:20px}
-.arena-match{display:flex;justify-content:center;align-items:center;gap:20px;flex-wrap:wrap}
-.arena-card img{width:140px;height:196px;object-fit:cover;border-radius:12px}
-.arena-vs{font-size:2rem;color:#f5c842}
-#battleStory{margin-top:20px;background:#181818;padding:16px;border-radius:12px;min-height:120px;white-space:pre-wrap}
-.arena-actions{display:flex;gap:10px;justify-content:center;margin-top:15px;flex-wrap:wrap}
-.arena-btn{background:#f5c842;color:#000;border:none;padding:10px 18px;border-radius:999px;font-weight:bold;cursor:pointer}
-#battleHistory{margin-top:15px;color:#aaa;font-size:.9rem}
-</style>
+/* ══════════════════════════════════════════
+   ARENA MODAL
+══════════════════════════════════════════ */
+.arena-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: rgba(0,0,0,.92);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow-y: auto;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease;
+  padding: 20px 16px 40px;
+}
+.arena-modal.open {
+  opacity: 1;
+  pointer-events: all;
+}
+.arena-inner {
+  width: 100%;
+  max-width: 560px;
+  margin: auto;
+}
 
+/* Header */
+.arena-header {
+  position: relative;
+  text-align: center;
+  padding: 36px 20px 28px;
+}
+.arena-close {
+  position: absolute;
+  top: 16px;
+  right: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #2a2a2a;
+  background: #111;
+  color: #666;
+  font-size: .9rem;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: color .18s, border-color .18s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.arena-close:hover { color: #f0f0f0; border-color: #555; }
+.arena-eyebrow {
+  font-size: .68rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: #555;
+  margin-bottom: 8px;
+}
+.arena-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 6px;
+  letter-spacing: -.01em;
+}
+.arena-subtitle {
+  font-size: .85rem;
+  color: #555;
+  font-weight: 400;
+}
+
+/* Stage */
+.arena-stage {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 0 4px 24px;
+}
+.fighter-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.fighter-label {
+  font-size: .7rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #555;
+}
+
+/* Card preview */
+.fighter-card-preview {
+  width: 130px;
+  aspect-ratio: 2.5/3.5;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #111;
+  border: 1px solid #2a2a2a;
+  box-shadow: 0 8px 28px rgba(0,0,0,.5);
+  transition: box-shadow .3s, transform .3s;
+  position: relative;
+}
+.fighter-card-preview.loaded {
+  box-shadow: 0 12px 40px rgba(0,0,0,.6);
+}
+.fighter-card-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0;
+  transition: opacity .35s;
+}
+.fighter-card-preview img.visible { opacity: 1; }
+.fighter-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: repeating-linear-gradient(
+    45deg,
+    #111 0, #111 10px,
+    #131313 10px, #131313 20px
+  );
+}
+.fighter-q {
+  font-size: 2.4rem;
+  color: #2a2a2a;
+  font-weight: 700;
+}
+
+/* VS divider */
+.vs-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 60px;
+}
+.vs-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid #2a2a2a;
+  background: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: var(--accent);
+}
+
+/* Fighter select */
+.fighter-select {
+  width: 100%;
+  max-width: 150px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px solid #2a2a2a;
+  background: #111;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: .78rem;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  text-align: center;
+  transition: border-color .18s;
+}
+.fighter-select:focus { border-color: var(--accent); }
+
+/* Battle button */
+.arena-actions {
+  text-align: center;
+  padding: 4px 0 12px;
+}
+.battle-btn {
+  padding: 13px 36px;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #000;
+  font-family: var(--font);
+  font-size: .95rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: .04em;
+  transition: background .18s, opacity .18s, transform .15s;
+}
+.battle-btn:hover:not(:disabled) { background: #ffd84d; transform: translateY(-1px); }
+.battle-btn:disabled { opacity: .3; cursor: default; transform: none; }
+.battle-btn.secondary {
+  background: transparent;
+  color: var(--text);
+  border-color: #2a2a2a;
+  font-size: .82rem;
+  padding: 10px 22px;
+}
+.battle-btn.secondary:hover { border-color: #555; color: var(--text); }
+
+/* BATTLE ANIMATIONS */
+@keyframes arenaShake {
+  0%,100% { transform: translateX(0) rotate(0deg); }
+  10%      { transform: translateX(-8px) rotate(-2deg); }
+  20%      { transform: translateX(8px) rotate(2deg); }
+  30%      { transform: translateX(-6px) rotate(-1deg); }
+  40%      { transform: translateX(6px) rotate(1deg); }
+  50%      { transform: translateX(-4px) rotate(-1deg); }
+  60%      { transform: translateX(4px) rotate(0.5deg); }
+  70%      { transform: translateX(-2px); }
+}
+@keyframes arenaFlash {
+  0%,100% { opacity: 1; }
+  50%      { opacity: .15; }
+}
+@keyframes winnerPop {
+  0%   { transform: scale(0.5); opacity: 0; }
+  60%  { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); }
+}
+@keyframes storyFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes swordSpin {
+  0%   { transform: rotate(0deg) scale(1); }
+  50%  { transform: rotate(180deg) scale(1.4); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+.arena-stage.battling .fighter-card-preview {
+  animation: arenaShake 0.6s ease-in-out;
+}
+.arena-stage.battling .vs-circle {
+  animation: swordSpin 0.7s cubic-bezier(.23,1,.32,1);
+  color: #fff;
+  border-color: var(--accent);
+  background: rgba(245,200,66,.15);
+}
+.arena-stage.flash-a #previewA { animation: arenaFlash 0.3s ease-in-out; }
+.arena-stage.flash-b #previewB { animation: arenaFlash 0.3s ease-in-out; }
+
+/* Result panel */
+.battle-result {
+  margin-top: 8px;
+  padding: 24px 4px 0;
+  border-top: 1px solid #1e1e1e;
+  animation: storyFadeIn .4s ease-out;
+}
+.result-vs-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.result-fighter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.result-fighter img {
+  width: 72px;
+  aspect-ratio: 2.5/3.5;
+  object-fit: cover;
+  border-radius: 7px;
+  border: 1px solid #2a2a2a;
+}
+.result-fighter.winner img {
+  border-color: var(--accent);
+  box-shadow: 0 0 20px rgba(245,200,66,.3);
+}
+.result-fighter.loser img {
+  opacity: .45;
+  filter: grayscale(60%);
+}
+.result-fighter-name {
+  font-size: .72rem;
+  color: #666;
+  text-align: center;
+  max-width: 90px;
+}
+.result-vs { font-size: 1.1rem; color: #333; }
+
+.battle-story {
+  background: #0f0f0f;
+  border: 1px solid #1e1e1e;
+  border-radius: 12px;
+  padding: 18px 20px;
+  font-size: .86rem;
+  line-height: 1.7;
+  color: #aaa;
+  margin-bottom: 20px;
+}
+.battle-story p { margin: 0 0 8px; }
+.battle-story p:last-child { margin-bottom: 0; }
+
+.winner-announcement {
+  text-align: center;
+  margin-bottom: 24px;
+  animation: winnerPop .5s cubic-bezier(.23,1,.32,1);
+}
+.winner-trophy { font-size: 2rem; display: block; margin-bottom: 4px; }
+.winner-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 4px;
+}
+.winner-label {
+  font-size: .75rem;
+  color: #555;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.result-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+</style>
 </head>
 <body>
 
@@ -548,8 +872,8 @@ header {
   <div class="header-actions">
     <button class="icon-btn" id="searchBtn" aria-label="Search">🔍</button>
     <button class="icon-btn" id="collectionBtn" aria-label="Toggle collection">♡</button>
+    <button class="icon-btn arena-icon-btn" id="arenaBtn" aria-label="The Arena" title="The Arena">⚔</button>
     <button class="icon-btn" id="shareBtn" aria-label="Share">↗</button>
-    <button class="icon-btn" id="arenaBtn" aria-label="Arena">⚔</button>
   </div>
 </header>
 
@@ -619,6 +943,75 @@ header {
   </div>
   <button class="lightbox-nav next" id="lbNext">›</button>
 </div>
+
+<!-- ══════════════ ARENA MODAL ══════════════ -->
+<div id="arenaModal" class="arena-modal">
+  <div class="arena-inner">
+
+    <!-- Header -->
+    <div class="arena-header">
+      <button class="arena-close" id="arenaClose" aria-label="Close arena">✕</button>
+      <div class="arena-title-block">
+        <div class="arena-eyebrow">Bro Co. Battle System</div>
+        <h2 class="arena-title">⚔ The Arena</h2>
+        <p class="arena-subtitle">Choose your fighters. Let destiny decide.</p>
+      </div>
+    </div>
+
+    <!-- Fighter selectors -->
+    <div class="arena-stage" id="arenaStage">
+      <div class="fighter-slot" id="slotA">
+        <div class="fighter-label">Fighter 1</div>
+        <div class="fighter-card-preview" id="previewA">
+          <div class="fighter-placeholder">
+            <span class="fighter-q">?</span>
+          </div>
+        </div>
+        <select class="fighter-select" id="selectA" aria-label="Choose Fighter 1">
+          <option value="">Choose a Shaylen…</option>
+        </select>
+      </div>
+
+      <div class="vs-divider" id="vsDivider">
+        <div class="vs-circle">VS</div>
+      </div>
+
+      <div class="fighter-slot" id="slotB">
+        <div class="fighter-label">Fighter 2</div>
+        <div class="fighter-card-preview" id="previewB">
+          <div class="fighter-placeholder">
+            <span class="fighter-q">?</span>
+          </div>
+        </div>
+        <select class="fighter-select" id="selectB" aria-label="Choose Fighter 2">
+          <option value="">Choose a Shaylen…</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Battle button -->
+    <div class="arena-actions">
+      <button class="battle-btn" id="battleBtn" disabled>⚔ Battle!</button>
+    </div>
+
+    <!-- Result panel (hidden until battle) -->
+    <div class="battle-result" id="battleResult" hidden>
+      <div class="result-vs-bar">
+        <div class="result-fighter" id="resultFighterA"></div>
+        <div class="result-vs">⚔</div>
+        <div class="result-fighter" id="resultFighterB"></div>
+      </div>
+      <div class="battle-story" id="battleStory"></div>
+      <div class="winner-announcement" id="winnerAnnouncement"></div>
+      <div class="result-actions">
+        <button class="battle-btn secondary" id="rematchBtn">↩ Rematch</button>
+        <button class="battle-btn secondary" id="shareBattleBtn">↗ Share result</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- ══════════════ END ARENA ══════════════ -->
 
 <script>
 (function(){
@@ -976,80 +1369,264 @@ function showToast(msg) {
   }, 1800);
 }
 
+
+/* ══════════════════════════════════════════
+   ARENA / BATTLE SYSTEM
+══════════════════════════════════════════ */
+
+const BATTLE_OPENER = [
+  "The crowd goes absolutely silent.",
+  "The arena lights dim. A hush falls over the audience.",
+  "An announcer’s voice echoes: ‘Ladies and gentlemen…’",
+  "Thunder rumbles outside. The lights flicker.",
+  "Two Shaylens enter the arena. Only one will leave with their dignity intact.",
+];
+
+const BATTLE_MOVES = [
+  ["{A} opens with an unexpected hair flip that distracts {B} completely.",
+   "{B} recovers and fires back with a devastating side-eye.",
+   "{A} responds by pulling out a half-eaten snack from their pocket — iconic."],
+
+  ["{A} immediately trips over nothing, but plays it off flawlessly.",
+   "{B} attempts a power move but accidentally poses for a photo instead.",
+   "{A} seizes the moment and unleashes the world-famous Shaylen Stare™."],
+
+  ["{B} opens with a loud and confident declaration that makes no sense whatsoever.",
+   "{A} blinks slowly. Twice. That was the whole attack.",
+   "{B} is visibly rattled. Their rarity stat drops by vibes."],
+
+  ["{A} screams something indecipherable at maximum volume.",
+   "{B} responds by simply existing — also a strong move.",
+   "Both combatants pause to take a selfie. The crowd approves."],
+
+  ["{A} attempts to reason with {B}. {B} is not taking questions at this time.",
+   "{B} pulls out an ancient scroll. It just says 'NO' in large letters.",
+   "{A} fights back with pure chaotic energy. Very effective."],
+
+  ["{B} delivers a monologue so long that {A} actually falls asleep mid-battle.",
+   "{A} wakes up, immediately wins the next exchange purely on instinct.",
+   "{B} files a formal complaint with the referee. The referee shrugs."],
+
+  ["{A} tries a technique they saw in a dream. Surprisingly, it works.",
+   "{B} counters with a cold stare that has ended lesser battles instantly.",
+   "The arena temperature drops 3 degrees. Even the judges feel it."],
+
+  ["{B} attempts to negotiate a truce. {A} does not accept negotiations.",
+   "{A} makes a face that cannot be described in words.",
+   "{B} considers retiring. Decides against it. Regrets this."],
+];
+
+const BATTLE_FINISH = {
+  A: [
+    "When the dust settles, {A} stands tall — slightly confused, but victorious.",
+    "{A} wins it all with a final move that no one saw coming, including {A}.",
+    "After an exhausting battle, {A} claims victory and immediately asks what's for lunch.",
+    "The judges unanimously declare {A} the winner. {B} disputes this. The judges don't care.",
+  ],
+  B: [
+    "{B} pulls ahead in the final moments with a performance that defies all logic.",
+    "Against all odds, {B} emerges victorious — looking incredible doing it.",
+    "In a stunning reversal, {B} takes the win. The crowd erupts.",
+    "{B} wins on a technicality that won't be explained. Accept it.",
+  ],
+  TIE: [
+    "In an unprecedented twist, the judges declare it a DRAW. Both Shaylens look equally unbothered.",
+    "Neither combatant will yield. After three hours, the battle is officially declared a tie. History is made.",
+  ],
+};
+
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function fill(str, a, b) { return str.replace(/{A}/g, `<strong>${a}</strong>`).replace(/{B}/g, `<strong>${b}</strong>`); }
+
+function buildBattleStory(nameA, nameB) {
+  const opener = pick(BATTLE_OPENER);
+  const moveSet = pick(BATTLE_MOVES);
+  const roll = Math.random();
+  let winner, finisher;
+  if (roll < 0.46) {
+    winner = 'A';
+    finisher = pick(BATTLE_FINISH.A);
+  } else if (roll < 0.92) {
+    winner = 'B';
+    finisher = pick(BATTLE_FINISH.B);
+  } else {
+    winner = 'TIE';
+    finisher = pick(BATTLE_FINISH.TIE);
+  }
+
+  const paragraphs = [opener, ...moveSet, finisher]
+    .map(line => `<p>${fill(line, nameA, nameB)}</p>`)
+    .join('');
+
+  return { paragraphs, winner };
+}
+
+// Populate selects
+function populateArenaSelects() {
+  const selectA = document.getElementById('selectA');
+  const selectB = document.getElementById('selectB');
+  const opts = cards.map(c => `<option value="${c[0]}">${c[1]}</option>`).join('');
+  selectA.innerHTML = '<option value="">Choose a Shaylen…</option>' + opts;
+  selectB.innerHTML = '<option value="">Choose a Shaylen…</option>' + opts;
+}
+
+// Load card preview
+function loadFighterPreview(previewEl, cardId) {
+  if (!cardId) {
+    previewEl.innerHTML = '<div class="fighter-placeholder"><span class="fighter-q">?</span></div>';
+    return;
+  }
+  previewEl.innerHTML = '<img alt="fighter card" />';
+  const img = previewEl.querySelector('img');
+  const base = 'card_' + cardId;
+  loadSmart(img, base);
+  img.addEventListener('load', () => {
+    img.classList.add('visible');
+    previewEl.classList.add('loaded');
+  }, { once: true });
+  if (img.complete && img.naturalWidth) {
+    img.classList.add('visible');
+    previewEl.classList.add('loaded');
+  }
+}
+
+function updateBattleBtn() {
+  const a = document.getElementById('selectA').value;
+  const b = document.getElementById('selectB').value;
+  const btn = document.getElementById('battleBtn');
+  btn.disabled = !a || !b || a === b;
+  btn.textContent = a && b && a === b ? '⚔ Choose different fighters!' : '⚔ Battle!';
+}
+
+function runBattle() {
+  const idA = document.getElementById('selectA').value;
+  const idB = document.getElementById('selectB').value;
+  if (!idA || !idB || idA === idB) return;
+
+  const cardA = cards.find(c => c[0] === idA);
+  const cardB = cards.find(c => c[0] === idB);
+  const nameA = cardA[1], nameB = cardB[1];
+
+  // Animate the stage
+  const stage = document.getElementById('arenaStage');
+  document.getElementById('battleResult').hidden = true;
+  document.getElementById('battleBtn').disabled = true;
+
+  stage.classList.add('battling');
+  setTimeout(() => stage.classList.add('flash-a'), 300);
+  setTimeout(() => { stage.classList.remove('flash-a'); stage.classList.add('flash-b'); }, 600);
+  setTimeout(() => stage.classList.remove('flash-b'), 900);
+  setTimeout(() => {
+    stage.classList.remove('battling');
+    document.getElementById('battleBtn').disabled = false;
+    showBattleResult(idA, idB, nameA, nameB);
+  }, 1100);
+}
+
+function showBattleResult(idA, idB, nameA, nameB) {
+  const { paragraphs, winner } = buildBattleStory(nameA, nameB);
+
+  // Populate result fighter thumbnails
+  const rfA = document.getElementById('resultFighterA');
+  const rfB = document.getElementById('resultFighterB');
+
+  rfA.className = 'result-fighter' + (winner === 'A' ? ' winner' : winner === 'B' ? ' loser' : '');
+  rfB.className = 'result-fighter' + (winner === 'B' ? ' winner' : winner === 'A' ? ' loser' : '');
+
+  rfA.innerHTML = `<img alt="${nameA}"><div class="result-fighter-name">${nameA}</div>`;
+  rfB.innerHTML = `<img alt="${nameB}"><div class="result-fighter-name">${nameB}</div>`;
+  loadSmart(rfA.querySelector('img'), 'card_' + idA);
+  loadSmart(rfB.querySelector('img'), 'card_' + idB);
+  [rfA, rfB].forEach(rf => {
+    const img = rf.querySelector('img');
+    if (img.complete && img.naturalWidth) img.style.opacity = '1';
+    else img.addEventListener('load', () => img.style.opacity = '1', { once: true });
+    img.style.opacity = '0';
+    img.style.transition = 'opacity .3s';
+  });
+
+  // Story
+  document.getElementById('battleStory').innerHTML = paragraphs;
+
+  // Winner
+  const wa = document.getElementById('winnerAnnouncement');
+  if (winner === 'TIE') {
+    wa.innerHTML = `<span class="winner-trophy">🤝</span><span class="winner-name">It's a Draw!</span><span class="winner-label">A historic stalemate</span>`;
+  } else {
+    const winCard = winner === 'A' ? { name: nameA } : { name: nameB };
+    wa.innerHTML = `<span class="winner-trophy">🏆</span><span class="winner-name">${winCard.name}</span><span class="winner-label">Wins the Battle!</span>`;
+  }
+
+  const resultEl = document.getElementById('battleResult');
+  resultEl.hidden = false;
+  resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  // Share battle result
+  document.getElementById('shareBattleBtn').onclick = async () => {
+    const winText = winner === 'TIE'
+      ? `${nameA} vs ${nameB} — It's a Draw! 🤝`
+      : `${winner === 'A' ? nameA : nameB} defeats ${winner === 'A' ? nameB : nameA}! 🏆`;
+    const text = `ShayDex Arena Battle:\n${winText}\n\nFight your own battles at shaydex.com`;
+    if (navigator.share) {
+      try { await navigator.share({ title: 'ShayDex Arena', text, url: location.href }); } catch(e){}
+    } else {
+      try { await navigator.clipboard.writeText(text + '\n' + location.href); showToast('Result copied!'); } catch(e){}
+    }
+  };
+
+  // Rematch
+  document.getElementById('rematchBtn').onclick = () => {
+    document.getElementById('battleResult').hidden = true;
+    updateBattleBtn();
+  };
+}
+
+// Open / close arena
+document.getElementById('arenaBtn').onclick = () => {
+  const modal = document.getElementById('arenaModal');
+  populateArenaSelects();
+  document.getElementById('battleResult').hidden = true;
+  updateBattleBtn();
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+};
+document.getElementById('arenaClose').onclick = () => {
+  document.getElementById('arenaModal').classList.remove('open');
+  document.body.style.overflow = '';
+};
+document.getElementById('arenaModal').addEventListener('click', e => {
+  if (e.target.id === 'arenaModal') {
+    document.getElementById('arenaModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+});
+
+// Fighter selects → live preview + battle btn
+document.getElementById('selectA').addEventListener('change', e => {
+  loadFighterPreview(document.getElementById('previewA'), e.target.value);
+  updateBattleBtn();
+});
+document.getElementById('selectB').addEventListener('change', e => {
+  loadFighterPreview(document.getElementById('previewB'), e.target.value);
+  updateBattleBtn();
+});
+
+// Battle!
+document.getElementById('battleBtn').onclick = runBattle;
+
+// Escape key closes arena
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    const m = document.getElementById('arenaModal');
+    if (m.classList.contains('open')) { m.classList.remove('open'); document.body.style.overflow = ''; }
+  }
+});
+
+/* ══════════════ END ARENA ══════════════ */
+
 init();
 
 })();
-</script>
-
-<div id="arenaModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:500;align-items:center;justify-content:center;padding:20px;">
-<div style="background:#111;border:1px solid #333;border-radius:16px;padding:24px;max-width:700px;width:100%;color:white;">
-<h2 style="margin-bottom:16px;color:#f5c842">⚔ THE ARENA</h2>
-<div style="display:flex;gap:10px;flex-wrap:wrap">
-<select id="fighterA" style="flex:1;padding:10px;background:#1a1a1a;color:white"></select>
-<select id="fighterB" style="flex:1;padding:10px;background:#1a1a1a;color:white"></select>
-</div>
-<button id="battleBtn" style="margin-top:16px;padding:12px 20px">Begin Battle</button>
-<button id="arenaClose" style="float:right">Close</button>
-<div id="battleStory" style="margin-top:20px;white-space:pre-wrap;line-height:1.6"></div>
-</div></div>
-<script>document.addEventListener("DOMContentLoaded",()=>{const btn=document.getElementById("arenaBtn");if(!btn) return;
-const cardNames=[...document.querySelectorAll('.card img[alt]')].map(i=>i.alt).filter(Boolean);
-const m=document.getElementById("arenaModal"),a=document.getElementById("fighterA"),b=document.getElementById("fighterB");cardNames.forEach(n=>{a.add(new Option(n,n));b.add(new Option(n,n));});btn.onclick=()=>m.style.display="flex";document.getElementById("arenaClose").onclick=()=>m.style.display="none";document.getElementById("battleBtn").onclick=()=>{const p=["unleashed a legendary attack","charged across the arena","summoned pure chaos","dodged at the last second"];const n1=a.value,n2=b.value;const winner=Math.random()>.5?n1:n2;document.getElementById("battleStory").textContent=`⚔ BATTLE REPORT
-
-${n1} ${p[Math.floor(Math.random()*p.length)]}.
-${n2} ${p[Math.floor(Math.random()*p.length)]}.
-The crowd erupted as the battle reached its climax.
-
-🏆 WINNER: ${winner}`;};});</script>
-<div id="arenaModal">
-<div class="arena-panel">
-<div class="arena-title">⚔ THE ARENA</div>
-<div class="arena-sub">Where Legends Clash</div>
-<div class="arena-match">
-<div class="arena-card"><select id="fighterA"></select><br><img id="imgA"></div>
-<div class="arena-vs">VS</div>
-<div class="arena-card"><select id="fighterB"></select><br><img id="imgB"></div>
-</div>
-<div class="arena-actions">
-<button class="arena-btn" id="startBattle">BEGIN THE BATTLE</button>
-<button class="arena-btn" id="rematchBtn">REMATCH</button>
-<button class="arena-btn" id="shareBattle">SHARE</button>
-<button class="arena-btn" id="closeArena">CLOSE</button>
-</div>
-<div id="battleStory"></div>
-<div id="battleHistory"></div>
-</div></div>
-
-<script>
-document.addEventListener('DOMContentLoaded',()=>{
-const arenaBtn=document.getElementById('arenaBtn')||document.querySelector('[data-arena],#arenaButton');
-if(!arenaBtn)return;
-const modal=document.getElementById('arenaModal');
-const a=document.getElementById('fighterA'), b=document.getElementById('fighterB');
-const imgA=document.getElementById('imgA'), imgB=document.getElementById('imgB');
-const cards=[...document.querySelectorAll('img[alt]')].map(i=>({name:i.alt,src:i.src})).filter(c=>c.name);
-const unique=[]; const seen=new Set(); cards.forEach(c=>{if(!seen.has(c.name)){seen.add(c.name);unique.push(c)}});
-unique.forEach(c=>{a.add(new Option(c.name,c.name)); b.add(new Option(c.name,c.name));});
-function upd(){let ca=unique.find(x=>x.name===a.value), cb=unique.find(x=>x.name===b.value); if(ca)imgA.src=ca.src; if(cb)imgB.src=cb.src;}
-a.onchange=upd;b.onchange=upd; upd();
-arenaBtn.onclick=()=>modal.classList.add('open');
-closeArena.onclick=()=>modal.classList.remove('open');
-const arenas=['Golden Colosseum','Haunted Archive','Pickle Kingdom','The Void','Castle of Legends','Mystic Forest'];
-function battle(){
-const loc=arenas[Math.floor(Math.random()*arenas.length)];
-const winner=Math.random()>.5?a.value:b.value;
-const loser=winner===a.value?b.value:a.value;
-const events=['unleashed a legendary attack','dodged through chaos','summoned unexpected energy','charged forward fearlessly'];
-const story=`⚔ Location: ${loc}\n\n${a.value} and ${b.value} entered the arena. ${winner} ${events[Math.floor(Math.random()*events.length)]} while ${loser} fought bravely. The crowd erupted as the battle reached its climax.\n\n🏆 WINNER: ${winner}`;
-battleStory.textContent=story;
-let h=JSON.parse(localStorage.getItem('arenaHistory')||'[]');
-h.unshift(`${winner} defeated ${loser} @ ${loc}`); h=h.slice(0,10);
-localStorage.setItem('arenaHistory',JSON.stringify(h));
-battleHistory.innerHTML='<b>Recent Battles</b><br>'+h.join('<br>');
-}
-startBattle.onclick=battle; rematchBtn.onclick=battle;
-shareBattle.onclick=()=>navigator.clipboard.writeText(battleStory.textContent);
-});
 </script>
 </body>
 </html>
