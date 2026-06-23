@@ -858,6 +858,16 @@ header {
   flex-wrap: wrap;
 }
 
+
+/* ===== ARENA V4 PRODUCTION ===== */
+.arena-v4-hub{margin:14px 0 20px;padding:14px;border:1px solid #2a2a2a;border-radius:14px;background:#0f0f0f}
+.arena-dashboard{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.arena-stat{padding:10px;border:1px solid #222;border-radius:10px;text-align:center}
+.arena-stat-value{color:#f5c842;font-weight:700;font-size:1rem}
+.power-bar{height:8px;background:#1a1a1a;border-radius:999px;overflow:hidden;margin-top:6px}
+.power-fill{height:100%;background:#f5c842;width:50%}
+@media(max-width:700px){.arena-dashboard{grid-template-columns:repeat(2,1fr)}}
+
 </style>
 </head>
 <body>
@@ -989,7 +999,17 @@ header {
       </div>
     </div>
 
-    <!-- Battle button -->
+    
+<div class="arena-v4-hub">
+<div class="arena-dashboard">
+<div class="arena-stat"><div>Arena Battles</div><div class="arena-stat-value" id="v4BattleCount">0</div></div>
+<div class="arena-stat"><div>Champion</div><div class="arena-stat-value" id="v4Champion">-</div></div>
+<div class="arena-stat"><div>Win Streak</div><div class="arena-stat-value" id="v4Streak">0</div></div>
+<div class="arena-stat"><button class="battle-btn secondary" id="randomBattleBtn">🎲 Random Battle</button></div>
+</div>
+</div>
+
+<!-- Battle button -->
     <div class="arena-actions">
       <button class="battle-btn" id="battleBtn" disabled>⚔ Battle!</button>
     </div>
@@ -1666,6 +1686,70 @@ document.addEventListener('keydown', e => {
 });
 
 /* ══════════════ END ARENA ══════════════ */
+
+
+const ARENA_V4={battleCount:0,wins:{},champion:'-',streak:0,lastWinner:null};
+
+function getPower(card){
+ const rarity=card[2];
+ let base={Basic:50,Rare:68,'Secret Rare':82,'Eternal Legend':95,Dark:88}[rarity]||60;
+ return base+Math.floor(Math.random()*12);
+}
+
+function updateArenaV4UI(){
+ const champ=Object.entries(ARENA_V4.wins).sort((a,b)=>b[1]-a[1])[0];
+ document.getElementById('v4BattleCount').textContent=ARENA_V4.battleCount;
+ document.getElementById('v4Champion').textContent=champ?champ[0]:'-';
+ document.getElementById('v4Streak').textContent=ARENA_V4.streak;
+}
+
+setTimeout(()=>{
+ const rb=document.getElementById('randomBattleBtn');
+ if(rb){
+   rb.onclick=()=>{
+      const ids=cards.map(c=>c[0]);
+      let a=ids[Math.floor(Math.random()*ids.length)];
+      let b=a;
+      while(b===a){b=ids[Math.floor(Math.random()*ids.length)];}
+      selectA.value=a; selectB.value=b;
+      loadFighterPreview(document.getElementById('previewA'),a);
+      loadFighterPreview(document.getElementById('previewB'),b);
+      updateBattleBtn();
+   };
+ }
+ updateArenaV4UI();
+},0);
+
+const __buildBattleStory=buildBattleStory;
+buildBattleStory=function(nameA,nameB){
+ const result=__buildBattleStory(nameA,nameB);
+ const cardA=cards.find(c=>c[1]===nameA);
+ const cardB=cards.find(c=>c[1]===nameB);
+ const pA=getPower(cardA);
+ const pB=getPower(cardB);
+ result.paragraphs=`<p><strong>Power Scan:</strong> ${nameA} (${pA}) vs ${nameB} (${pB})</p>`+result.paragraphs;
+ if(Math.abs(pA-pB)>12){
+   result.winner=pA>pB?'A':'B';
+ }
+ return result;
+};
+
+const __showBattleResult=showBattleResult;
+showBattleResult=function(idA,idB,nameA,nameB){
+ __showBattleResult(idA,idB,nameA,nameB);
+ ARENA_V4.battleCount++;
+ const txt=document.getElementById('winnerAnnouncement').innerText;
+ let winner=null;
+ if(txt.includes(nameA)) winner=nameA;
+ if(txt.includes(nameB)) winner=nameB;
+ if(winner){
+   ARENA_V4.wins[winner]=(ARENA_V4.wins[winner]||0)+1;
+   if(ARENA_V4.lastWinner===winner) ARENA_V4.streak++;
+   else ARENA_V4.streak=1;
+   ARENA_V4.lastWinner=winner;
+ }
+ updateArenaV4UI();
+};
 
 init();
 
