@@ -1984,27 +1984,17 @@ document.getElementById('adventureBtn')?.addEventListener('click',()=>{
       <h3 id="storyTitle">Choose Your Adventure</h3>
       <p id="storyText">Select a Shaylen above to begin their adventure.</p>
       <div id="storyChoices" style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:28px;padding-top:10px"></div>
+<div id="badgeCollection" style="margin-top:18px;padding:14px;border:1px solid #333;border-radius:12px;background:#0f0f0f">
+<h3>🏅 Badge Collection <span id="badgeProgress">0/2</span></h3>
+<div id="badgeGrid" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"></div>
+</div>
+
     </div>
   </div>
 </div>
 
 <script>
 (function(){
-
-const adventureImgCache={};
-function loadSmart(img,base){
- if(!img) return;
- const tries=[base+'.jpeg',base+'.JPEG',base+'.jpg',base+'.JPG',base+'.png',base+'.PNG',base+'.webp',base+'.WEBP'];
- let i=0;
- function next(){
-   if(i>=tries.length) return;
-   const test=new Image();
-   test.onload=()=>{img.src=tries[i];};
-   test.onerror=()=>{i++;next();};
-   test.src=tries[i];
- }
- next();
-}
 
 const adventures={
 pickle:{
@@ -2049,6 +2039,44 @@ baby:{
 }
 };
 
+
+const BADGE_KEY='shaydex_adventure_badges';
+let badges=JSON.parse(localStorage.getItem(BADGE_KEY)||'{}');
+const badgeDefs={
+pickle:{name:'🥒 The Brine Champion',desc:'Completed Pickle Shaylen Adventure'},
+baby:{name:'👶 Tiny Legend',desc:'Completed Baby Shaylen Adventure'}
+};
+function renderBadges(){
+ const g=document.getElementById('badgeGrid');
+ const p=document.getElementById('badgeProgress');
+ if(!g||!p)return;
+ let unlocked=0;
+ g.innerHTML='';
+ Object.keys(badgeDefs).forEach(id=>{
+  const ok=!!badges[id];
+  if(ok) unlocked++;
+  const d=document.createElement('div');
+  d.style.cssText='padding:10px;border:1px solid #333;border-radius:10px;min-width:160px';
+  d.innerHTML=ok?'<strong>'+badgeDefs[id].name+'</strong><br><small>'+badgeDefs[id].desc+'</small><br><button data-share="'+id+'">Share</button>'
+                :'<strong>🔒 Locked</strong><br><small>'+badgeDefs[id].desc+'</small>';
+  g.appendChild(d);
+ });
+ p.textContent=unlocked+'/2';
+ g.querySelectorAll('[data-share]').forEach(b=>b.onclick=async()=>{
+   const id=b.dataset.share;
+   const txt='I unlocked the '+badgeDefs[id].name+' badge in ShayDex Adventure Mode!';
+   if(navigator.share){try{await navigator.share({title:'ShayDex Badge',text:txt});}catch(e){}}
+   else navigator.clipboard.writeText(txt);
+ });
+}
+function unlockBadge(id){
+ if(badges[id]) return;
+ badges[id]=true;
+ localStorage.setItem(BADGE_KEY,JSON.stringify(badges));
+ alert('🏅 Badge Unlocked: '+badgeDefs[id].name);
+ renderBadges();
+}
+
 let currentAdventure='pickle';
 
 function getNodes(){ return adventures[currentAdventure]; }
@@ -2059,6 +2087,8 @@ function renderNode(id){
  storyText.textContent=n.x;
  storyChoices.innerHTML='';
  if(!n.c.length){
+ unlockBadge(currentAdventure);
+
    let b=document.createElement('button');
    b.className='battle-btn';
    b.style.minWidth='240px'; b.style.margin='8px';
@@ -2111,7 +2141,7 @@ const storyChoices=document.getElementById('storyChoices');
 
 loadSmart(document.getElementById('adventurePickleImg'),'card_7');
 loadSmart(document.getElementById('adventureBabyImg'),'card_11');
-loadSmart(document.getElementById('adventureHeroImage'),'card_7');
+loadSmart(document.getElementById('adventureHeroImage'),'card_7'); renderBadges();
 
 window.openAdventure=
 ()=>{
