@@ -1994,6 +1994,20 @@ function getArenaCatchphrase(cardName){
 <script>
 (function(){
 
+function loadSmart(img, base){
+  if(!img) return;
+  const tries=[base+'.jpeg',base+'.JPEG',base+'.jpg',base+'.JPG',base+'.png',base+'.PNG',base+'.webp',base+'.WEBP'];
+  let i=0;
+  function next(){
+    if(i>=tries.length) return;
+    const test=new Image();
+    test.onload=()=>{ img.src=tries[i]; };
+    test.onerror=()=>{ i++; next(); };
+    test.src=tries[i];
+  }
+  next();
+}
+
 const adventures={
 pickle:{
 0:{t:'Chapter 1: The Pickle Portal',x:'Pickle Shaylen discovers a glowing pickle jar beneath ShayDex Arena.',c:[['Open the Jar',1],['Walk Away',2],['Take It Home',6]]},
