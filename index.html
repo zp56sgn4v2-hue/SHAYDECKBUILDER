@@ -1964,14 +1964,21 @@ document.getElementById('adventureBtn')?.addEventListener('click',()=>{
       <h2 class="arena-title">🗺 Adventure Mode</h2>
       <p class="arena-subtitle">Choose a Shaylen and begin an adventure</p>
 <div style="margin-top:16px;text-align:center">
-<select id="adventureSelector" class="fighter-select" style="max-width:260px">
-<option value="pickle">🥒 Pickle Shaylen</option>
-<option value="baby">👶 Baby Shaylen</option>
-</select>
+<div id="adventurePicker" style="display:flex;justify-content:center;gap:18px;flex-wrap:wrap">
+  <div class="adventure-option active" data-adventure="pickle" style="cursor:pointer">
+    <img id="adventurePickleImg" src="card_7.jpg" onerror="this.onerror=null;this.src='card_7.jpeg';" style="width:95px;height:133px;object-fit:cover;border-radius:12px;border:2px solid #f5c842">
+    <div style="margin-top:6px;font-size:.8rem">🥒 Pickle Shaylen</div>
+  </div>
+  <div class="adventure-option" data-adventure="baby" style="cursor:pointer">
+    <img id="adventureBabyImg" src="card_11.jpg" onerror="this.onerror=null;this.src='card_11.jpeg';" style="width:95px;height:133px;object-fit:cover;border-radius:12px;border:2px solid #333">
+    <div style="margin-top:6px;font-size:.8rem">👶 Baby Shaylen</div>
+  </div>
+</div>
+<input type="hidden" id="adventureSelector" value="pickle">
 </div>
     </div>
     <div style="text-align:center;padding:0 20px 20px">
-      <img src="card_7.png" onerror="this.onerror=null;this.src='card_7.jpg';" style="width:220px;max-width:80%;border-radius:16px;border:1px solid #333">
+      <img id="adventureHeroImage" src="card_7.jpg" onerror="this.onerror=null;this.src='card_7.jpeg';" style="width:220px;max-width:80%;border-radius:16px;border:1px solid #333">
     </div>
     <div id="adventureCard" style="max-width:700px;margin:auto;border:1px solid #2a2a2a;border-radius:16px;padding:20px;background:#111">
       <h3 id="storyTitle">Choose Your Adventure</h3>
