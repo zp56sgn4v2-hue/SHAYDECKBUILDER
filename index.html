@@ -767,17 +767,7 @@ header {
 .arena-stage.battling .fighter-card-preview {
   animation: arenaShake 0.6s ease-in-out;
 }
-
-.arena-cinematic{
-position:fixed;inset:0;background:radial-gradient(circle,#f5c84222,#000);
-display:none;align-items:center;justify-content:center;
-font-size:5rem;color:#f5c842;z-index:999;
-font-weight:900;letter-spacing:.1em;
-}
-.arena-cinematic.show{display:flex;animation:fadein .8s ease;}
-@keyframes fadein{from{opacity:0}to{opacity:1}}
 .arena-stage.battling .vs-circle {
-
   animation: swordSpin 0.7s cubic-bezier(.23,1,.32,1);
   color: #fff;
   border-color: var(--accent);
@@ -1010,16 +1000,8 @@ font-weight:900;letter-spacing:.1em;
     </div>
 
     
-<div class="arena-v4-hub">
-<div class="arena-dashboard">
-<div class="arena-stat"><div class="arena-stat-value" id="v4BattleCount">0</div><div>Battles</div></div>
-<div class="arena-stat"><div class="arena-stat-value" id="v4Champion">-</div><div>Champion</div></div>
-<div class="arena-stat"><div class="arena-stat-value" id="v4Streak">0</div><div>Streak</div></div>
-<div class="arena-stat"><div class="arena-stat-value" id="v4Mode">V</div><div>Arena</div></div>
-</div>
-<div style="display:flex;justify-content:center;margin-top:12px">
-<button class="battle-btn secondary" id="randomBattleBtn" style="padding:8px 16px;font-size:.75rem">🎲 Random Battle</button><button class="battle-btn secondary" id="tournamentBtn" style="padding:8px 16px;font-size:.75rem;margin-left:8px">🏆 Tournament</button>
-</div>
+<div class="arena-v4-hub" style="display:flex;justify-content:center">
+<button class="battle-btn secondary" id="randomBattleBtn" style="padding:8px 16px;font-size:.75rem">🎲 Random Battle</button>
 </div>
 
 <!-- Battle button -->
@@ -1028,13 +1010,7 @@ font-weight:900;letter-spacing:.1em;
     </div>
 
     <!-- Result panel (hidden until battle) -->
-    
-<div style="margin:16px 0;padding:12px;border:1px solid #222;border-radius:12px;background:#0b0b0b">
-  <div style="color:#f5c842;font-weight:700;margin-bottom:8px">🏛 Hall of Champions</div>
-  <div id="arenaHistory" style="font-size:.8rem;color:#aaa;max-height:120px;overflow:auto">No battles yet.</div>
-</div>
-<div class="battle-result" id="battleResult" hidden>
-
+    <div class="battle-result" id="battleResult" hidden>
       <div class="result-vs-bar">
         <div class="result-fighter" id="resultFighterA"></div>
         <div class="result-vs">⚔</div>
@@ -1777,52 +1753,9 @@ showBattleResult=function(idA,idB,nameA,nameB){
  updateArenaV4UI();
 };
 
-
-const ARENA_HISTORY=[];
-
-const _runBattle=runBattle;
-runBattle=function(){
- const cine=document.getElementById('arenaCinematic');
- cine.classList.add('show');
- setTimeout(()=>cine.classList.remove('show'),1000);
- _runBattle();
-};
-
-const _showBattleResult2=showBattleResult;
-showBattleResult=function(idA,idB,nameA,nameB){
- _showBattleResult2(idA,idB,nameA,nameB);
- const winner=document.getElementById('winnerAnnouncement').innerText.split('\n')[1]||'Draw';
- ARENA_HISTORY.unshift('🏆 '+winner+' defeated '+(winner===nameA?nameB:nameA));
- document.getElementById('arenaHistory').innerHTML=ARENA_HISTORY.slice(0,10).join('<br>');
- localStorage.setItem('arenaHistoryV1',JSON.stringify(ARENA_HISTORY));
-};
-
-
-const tournamentBtn=document.getElementById('tournamentBtn');
-if(tournamentBtn){
- tournamentBtn.onclick=()=>{
-   const fighters=[...cards].sort(()=>Math.random()-0.5).slice(0,8);
-   let rounds=[...fighters];
-   let log=['🏆 TOURNAMENT OF LEGENDS'];
-   while(rounds.length>1){
-      const next=[];
-      for(let i=0;i<rounds.length;i+=2){
-        const a=rounds[i], b=rounds[i+1];
-        const pa=getPower(a), pb=getPower(b);
-        const w=pa>=pb?a:b;
-        next.push(w);
-        log.push(w[1]+' defeated '+(w===a?b[1]:a[1]));
-      }
-      rounds=next;
-   }
-   document.getElementById('arenaHistory').innerHTML=log.join('<br>');
-   showToast('Tournament Champion: '+rounds[0][1]);
- };
-}
-
 init();
 
 })();
 </script>
-<div class="arena-cinematic" id="arenaCinematic">⚔ BATTLE ⚔</div></body>
+</body>
 </html>
