@@ -1635,7 +1635,7 @@ for(let i=0;i<35;i++){
 
  ctx.fillStyle='#fff';
  ctx.font='bold 84px sans-serif';
- ctx.fillText('⚔ VS ⚔',540,500);
+ ctx.fillText('VS',540,500);
 
  ctx.fillStyle='#f5c842';
  ctx.font='900 44px Cinzel';
@@ -1651,7 +1651,7 @@ for(let i=0;i<35;i++){
 
  const temp=document.createElement('div');
  temp.innerHTML=storyText||'';
- let recap=(temp.textContent||'').replace(/\s+/g,' ').trim();
+ let recap=getArenaCatchphrase(winnerName);
  if(recap.length>180) recap=recap.substring(0,177)+'...';
 
  ctx.fillStyle='#f5c842';
