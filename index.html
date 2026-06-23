@@ -1013,7 +1013,7 @@ header {
     <div class="battle-result" id="battleResult" hidden>
       <div class="result-vs-bar">
         <div class="result-fighter" id="resultFighterA"></div>
-        <div class="result-vs">⚔</div>
+        <div class="result-vs">VS</div>
         <div class="result-fighter" id="resultFighterB"></div>
       </div>
       <div class="battle-story" id="battleStory"></div>
@@ -1057,10 +1057,15 @@ const cards = [
   ['22','Nature Shaylen','Rare'],
   ['23','Shaylen And The Bros','Basic'],
   ['24','Bizarre Shaylen','Basic'],
-  ['25','Grafiti Shaylen','Basic']
+  ['25','Grafiti Shaylen','Basic'],
+  ['26','Thumbs Up Shaylen','Basic'],
+  ['27','Eye Spy Shaylen','Rare'],
+  ['28','Vampire Shaylen','Dark'],
+  ['29','Ghost Shaylen','Basic'],
+  ['30','Crafty Shaylen','Basic']
 ].sort((a,b) => Number(b[0]) - Number(a[0]));
 
-const MYSTERY_IDS = new Set(['23','24','25']);
+const MYSTERY_IDS = new Set(['26','27','28','29','30']);
 const RARITY_COLOR = {Basic:'#9aa3bb',Rare:'#60a5fa','Secret Rare':'#b388ff','Eternal Legend':'#facc15',Dark:'#f87171'};
 
 const FAV_KEY = 'shaydexFavorites_v3';
@@ -1613,11 +1618,11 @@ for(let i=0;i<35;i++){
  ctx.textAlign='center';
  ctx.fillStyle='#f5c842';
  ctx.font='900 74px Cinzel';
- ctx.fillText('⚔ THE ARENA ⚔',540,90);
+ ctx.fillText('THE ARENA',540,90);
 
  ctx.fillStyle='#9f9f9f';
  ctx.font='italic 28px Bebas Neue';
- ctx.fillText('LEGENDARY BATTLE',540,130);
+ ctx.fillText('CINEMATIC SHOWDOWN',540,130);
 
  if(aimg){
    ctx.save();
@@ -1635,7 +1640,7 @@ for(let i=0;i<35;i++){
 
  ctx.fillStyle='#fff';
  ctx.font='bold 84px sans-serif';
- ctx.fillText('VS',540,500);
+ ctx.font='900 110px sans-serif'; ctx.fillText('VS',540,500);
 
  ctx.fillStyle='#f5c842';
  ctx.font='900 44px Cinzel';
@@ -1706,7 +1711,7 @@ function showBattleResult(idA, idB, nameA, nameB) {
     wa.innerHTML = `<span class="winner-trophy">🤝</span><span class="winner-name">It's a Draw!</span><span class="winner-label">A historic stalemate</span>`;
   } else {
     const winCard = winner === 'A' ? { name: nameA } : { name: nameB };
-    wa.innerHTML = `<span class="winner-trophy">🏆</span><span class="winner-name">${winCard.name}</span><span class="winner-label">Wins the Battle!</span>`;
+    wa.innerHTML = `<span class="winner-trophy">🏆</span><span class="winner-name">${winCard.name}</span><span class="winner-label">Wins the Battle!</span><div style="margin-top:10px;color:#c9c9c9;font-size:.82rem;font-style:italic">${getArenaCatchphrase(winCard.name)}</div>`;
   }
 
   const resultEl = document.getElementById('battleResult');
