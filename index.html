@@ -976,7 +976,9 @@ init();
 <button id="arenaClose" style="float:right">Close</button>
 <div id="battleStory" style="margin-top:20px;white-space:pre-wrap;line-height:1.6"></div>
 </div></div>
-<script>document.addEventListener("DOMContentLoaded",()=>{const btn=document.getElementById("arenaBtn");if(!btn||typeof cards==="undefined") return;const m=document.getElementById("arenaModal"),a=document.getElementById("fighterA"),b=document.getElementById("fighterB");cards.forEach(c=>{a.add(new Option(c[1],c[1]));b.add(new Option(c[1],c[1]));});btn.onclick=()=>m.style.display="flex";document.getElementById("arenaClose").onclick=()=>m.style.display="none";document.getElementById("battleBtn").onclick=()=>{const p=["unleashed a legendary attack","charged across the arena","summoned pure chaos","dodged at the last second"];const n1=a.value,n2=b.value;const winner=Math.random()>.5?n1:n2;document.getElementById("battleStory").textContent=`⚔ BATTLE REPORT
+<script>document.addEventListener("DOMContentLoaded",()=>{const btn=document.getElementById("arenaBtn");if(!btn) return;
+const cardNames=[...document.querySelectorAll('.card img[alt]')].map(i=>i.alt).filter(Boolean);
+const m=document.getElementById("arenaModal"),a=document.getElementById("fighterA"),b=document.getElementById("fighterB");cardNames.forEach(n=>{a.add(new Option(n,n));b.add(new Option(n,n));});btn.onclick=()=>m.style.display="flex";document.getElementById("arenaClose").onclick=()=>m.style.display="none";document.getElementById("battleBtn").onclick=()=>{const p=["unleashed a legendary attack","charged across the arena","summoned pure chaos","dodged at the last second"];const n1=a.value,n2=b.value;const winner=Math.random()>.5?n1:n2;document.getElementById("battleStory").textContent=`⚔ BATTLE REPORT
 
 ${n1} ${p[Math.floor(Math.random()*p.length)]}.
 ${n2} ${p[Math.floor(Math.random()*p.length)]}.
