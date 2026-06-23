@@ -2090,11 +2090,19 @@ document.getElementById('adventureSelector')?.addEventListener('change',e=>{
 });
 
 
+const storyTitle=document.getElementById('storyTitle');
+const storyText=document.getElementById('storyText');
+const storyChoices=document.getElementById('storyChoices');
+
+loadSmart(document.getElementById('adventurePickleImg'),'card_7');
+loadSmart(document.getElementById('adventureBabyImg'),'card_11');
+loadSmart(document.getElementById('adventureHeroImage'),'card_7');
+
 window.openAdventure=
 ()=>{
  document.getElementById('adventureModal').classList.add('open');
  document.body.style.overflow='hidden';
- renderNode(0);
+ updateAdventureSelection(currentAdventure);
 };
 
 document.getElementById('adventureClose')?.addEventListener('click',()=>{
