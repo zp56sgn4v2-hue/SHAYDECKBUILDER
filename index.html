@@ -1966,11 +1966,11 @@ document.getElementById('adventureBtn')?.addEventListener('click',()=>{
 <div style="margin-top:16px;text-align:center">
 <div id="adventurePicker" style="display:flex;justify-content:center;gap:18px;flex-wrap:wrap">
   <div class="adventure-option active" data-adventure="pickle" style="cursor:pointer">
-    <img id="adventurePickleImg" src="card_7.jpg" onerror="this.onerror=null;this.src='card_7.jpeg';" style="width:95px;height:133px;object-fit:cover;border-radius:12px;border:2px solid #f5c842">
+    <img id="adventurePickleImg" data-base="card_7" style="width:95px;height:133px;object-fit:cover;border-radius:12px;border:2px solid #f5c842">
     <div style="margin-top:6px;font-size:.8rem">🥒 Pickle Shaylen</div>
   </div>
   <div class="adventure-option" data-adventure="baby" style="cursor:pointer">
-    <img id="adventureBabyImg" src="card_11.jpg" onerror="this.onerror=null;this.src='card_11.jpeg';" style="width:95px;height:133px;object-fit:cover;border-radius:12px;border:2px solid #333">
+    <img id="adventureBabyImg" data-base="card_11" style="width:95px;height:133px;object-fit:cover;border-radius:12px;border:2px solid #333">
     <div style="margin-top:6px;font-size:.8rem">👶 Baby Shaylen</div>
   </div>
 </div>
@@ -1978,7 +1978,7 @@ document.getElementById('adventureBtn')?.addEventListener('click',()=>{
 </div>
     </div>
     <div style="text-align:center;padding:0 20px 20px">
-      <img id="adventureHeroImage" src="card_7.jpg" onerror="this.onerror=null;this.src='card_7.jpeg';" style="width:220px;max-width:80%;border-radius:16px;border:1px solid #333">
+      <img id="adventureHeroImage" data-base="card_7" style="width:220px;max-width:80%;border-radius:16px;border:1px solid #333">
     </div>
     <div id="adventureCard" style="max-width:700px;margin:auto;border:1px solid #2a2a2a;border-radius:16px;padding:20px;background:#111">
       <h3 id="storyTitle">Choose Your Adventure</h3>
@@ -2048,7 +2048,7 @@ function renderNode(id){
    b.className='battle-btn';
    b.style.minWidth='240px'; b.style.margin='8px';
    b.textContent='Restart Adventure';
-   b.onclick=()=>renderNode(0);
+   b.onclick=()=>updateAdventureSelection(currentAdventure);
    storyChoices.appendChild(b);
    return;
  }
@@ -2062,10 +2062,33 @@ function renderNode(id){
  });
 }
 
-document.getElementById('adventureSelector')?.addEventListener('change',e=>{
- currentAdventure=e.target.value;
+
+function updateAdventureSelection(type){
+ currentAdventure=type;
+ document.getElementById('adventureSelector').value=type;
+
+ document.querySelectorAll('.adventure-option').forEach(el=>{
+   const active=el.dataset.adventure===type;
+   const img=el.querySelector('img');
+   if(img) img.style.border=active?'2px solid #f5c842':'2px solid #333';
+ });
+
+ const hero=document.getElementById('adventureHeroImage');
+ if(hero){
+   hero.src='';
+   loadSmart(hero,'card_'+(type==='pickle'?'7':'11'));
+ }
  renderNode(0);
+}
+
+document.querySelectorAll('.adventure-option').forEach(el=>{
+ el.addEventListener('click',()=>updateAdventureSelection(el.dataset.adventure));
 });
+
+document.getElementById('adventureSelector')?.addEventListener('change',e=>{
+ updateAdventureSelection(e.target.value);
+});
+
 
 window.openAdventure=
 ()=>{
